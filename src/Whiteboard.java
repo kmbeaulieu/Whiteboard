@@ -6,5 +6,16 @@ public class Whiteboard extends JComponent {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Set up a new whiteboard. Should be only one whiteboard frame
+	 */
+	public Whiteboard(){
+		
+	}
+	
+	public static void main(String[] args){
+		
+	}
 
 }

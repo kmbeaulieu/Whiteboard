@@ -2,9 +2,17 @@ package DShape;
 
 import java.awt.Graphics;
 
+import DShapeModel.DShapeModel;
+
 public class DShape {
 
-	public void draw(Graphics g){
-		
+	DShapeModel model;
+	
+	public DShape(DShapeModel dsm){
+		model = dsm;
+	}
+
+	public void draw(Graphics g) {
+
 	}
 }

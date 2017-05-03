@@ -3,11 +3,11 @@ package DShapeModel;
 import javafx.scene.paint.Color;
 
 public class DShapeModel {
-	int x;
-	int y;
-	int w;
-	int h;
-	Color color;
+	private int x;
+	private int y;
+	private int w;
+	private int h;
+	private Color color;
 	
 	/**
 	 * Default shape model constructor.
@@ -17,7 +17,7 @@ public class DShapeModel {
 		y = 0;
 		w = 0;
 		h = 0;
-		color = Color.BLACK;
+		color = Color.GRAY;
 	}
 	
 	/**
@@ -35,5 +35,47 @@ public class DShapeModel {
 		this.h = h;
 		this.color = c;
 	}
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	public int getW() {
+		return w;
+	}
+
+	public void setW(int w) {
+		this.w = w;
+	}
+
+	public int getH() {
+		return h;
+	}
+
+	public void setH(int h) {
+		this.h = h;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
+	
 
 }

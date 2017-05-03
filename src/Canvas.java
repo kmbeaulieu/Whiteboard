@@ -2,6 +2,10 @@ import javax.swing.JPanel;
 
 import DShapeModel.DShapeModel;
 
+/*
+ * JPanel should be 400x400. It contains the shapes
+ * 
+ */
 public class Canvas extends JPanel {
 
 	/** So it doesnt get mad
