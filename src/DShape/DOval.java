@@ -11,6 +11,6 @@ public class DOval extends DShape {
     @Override
 	public void draw(Graphics g){
 		super.draw(g);
-		//do custom text stuff here
+		//do custom oval stuff here
 	}
 }

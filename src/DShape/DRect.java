@@ -13,6 +13,6 @@ public class DRect extends DShape{
     @Override
 	public void draw(Graphics g){
 		super.draw(g);
-		//do custom text stuff here
+		//do custom rectangle stuff here
 	}
 }
