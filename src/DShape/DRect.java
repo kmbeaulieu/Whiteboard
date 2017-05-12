@@ -3,16 +3,19 @@ package DShape;
 import java.awt.Graphics;
 
 import DShapeModel.DShapeModel;
+import javafx.scene.shape.Rectangle;
 
 public class DRect extends DShape{
 
     public DRect(DShapeModel dsm) {
         super(dsm);
-    }
+    }   
 	
     @Override
 	public void draw(Graphics g){
 		super.draw(g);
+                g.fillRect(model.getX(), model.getY(), model.getW(), model.getH());
+               
 		//do custom rectangle stuff here
 	}
 }

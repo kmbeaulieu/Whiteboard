@@ -13,6 +13,6 @@ public class DShape {
 	}
 
 	public void draw(Graphics g) {
-
+            g.setColor(model.getColor());
 	}
 }

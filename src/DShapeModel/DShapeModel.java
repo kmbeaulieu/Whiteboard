@@ -1,6 +1,7 @@
 package DShapeModel;
 
-import javafx.scene.paint.Color;
+import java.awt.Color;
+
 
 public class DShapeModel {
 	private int x;
@@ -28,7 +29,7 @@ public class DShapeModel {
 	 * @param h height of the shape
 	 * @param c color of the shape
 	 */
-	DShapeModel(int x, int y, int w, int h, Color c){
+	public DShapeModel(int x, int y, int w, int h, Color c){
 		this.x = x;
 		this.y = y;
 		this.w = w;
@@ -72,8 +73,8 @@ public class DShapeModel {
 		return color;
 	}
 
-	public void setColor(Color color) {
-		this.color = color;
+	public void setColor(Color c) {
+		this.color = c;
 	}
 	
 	

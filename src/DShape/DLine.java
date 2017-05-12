@@ -11,6 +11,7 @@ public class DLine extends DShape {
     @Override
 	public void draw(Graphics g){
 		super.draw(g);
+                g.drawLine(model.getX(), model.getY(), model.getW(), model.getH());
 		//do custom line stuff here
 	}
 }

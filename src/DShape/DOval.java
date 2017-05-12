@@ -12,5 +12,6 @@ public class DOval extends DShape {
 	public void draw(Graphics g){
 		super.draw(g);
 		//do custom oval stuff here
+                g.fillOval(model.getX(), model.getY(), model.getW(), model.getH());
 	}
 }
