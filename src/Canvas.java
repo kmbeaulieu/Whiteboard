@@ -4,7 +4,9 @@ import DShapeModel.*;
 import javax.swing.JPanel;
 
 import DShapeModel.DShapeModel;
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
 import java.util.ArrayList;
 
 /*
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 public class Canvas extends JPanel {
 
     public ArrayList<DShape> list = new ArrayList();
+    public DShape selectedShape = null;
     /**
      * So it doesnt get mad
      *
@@ -28,28 +31,48 @@ public class Canvas extends JPanel {
     public void addShape(DShapeModel dsm) {
         // this might return something in the future?
         if (dsm instanceof DRectModel) {
-            list.add(new DRect(dsm));
+            DRect r = new DRect(dsm);
+            list.add(r);
+            selectedShape = r;
         } else if (dsm instanceof DOvalModel) {
-            list.add(new DOval(dsm));
-        } else if(dsm instanceof DLineModel){
-            list.add(new DLine(dsm));
-        }else if(dsm instanceof DTextModel){
-            list.add(new DText(dsm));
+            DOval o = new DOval(dsm);
+            list.add(o);
+            selectedShape = o;
+        } else if (dsm instanceof DLineModel) {
+            DLine l = new DLine(dsm);
+            list.add(l);
+            selectedShape = l;
+        } else if (dsm instanceof DTextModel) {
+            DText t = new DText(dsm);
+            list.add(t);
+            selectedShape = t;
         }
-       
-    
-}
 
-    public void clear(){
+    }
+
+    public DShape getSelectedShape() {
+        return selectedShape;
+    }
+
+    public void clear() {
         list.clear();
         repaint();
     }
-    
-@Override
-        protected void paintComponent(Graphics g) {
+
+    @Override
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates
         //draw all the shapes!
-        list.forEach(shape -> shape.draw(g));
+        list.forEach(shape ->{
+            if (shape == selectedShape) {
+                shape.draw(g);
+                Point p = shape.getCenterOfBounds();
+                g.setColor(Color.RED);
+                g.drawString("x", p.x, p.y);
+            } else {
+                shape.draw(g);
+            }
+        });
     }
 
 }

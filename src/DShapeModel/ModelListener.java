@@ -13,5 +13,9 @@ public interface ModelListener {
 	 * @param model pointer to the model that changed
 	 */
 	public void modelChanged(DShapeModel model);
+        
+        public void addListener(DShapeModel model);
+        
+        public void removeListener(DShapeModel model);
 
 }
