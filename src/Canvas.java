@@ -61,7 +61,7 @@ public class Canvas extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); //To change body of generated methods, choose Tools | Templates
+        super.paintComponent(g);
         //draw all the shapes!
         list.forEach(shape ->{
             if (shape == selectedShape) {
