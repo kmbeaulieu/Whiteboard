@@ -24,6 +24,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private CurrentShape currentShapeSelected = CurrentShape.NONE;
     private int startX = 0;
     private int startY = 0;
+    private boolean dragging = false;
+    private int shapeCount = 0;
 
     private void addToTable(DRectModel r) {
         //TODO
@@ -429,9 +431,32 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // start a drag
         startX = evt.getX();
         startY = evt.getY();
+        shapeCount = canvas.list.size();
     }//GEN-LAST:event_canvasMousePressed
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
+
+        dragging = false;
+    }//GEN-LAST:event_canvasMouseReleased
+
+    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
+        // TODO add your handling code here:
+        canvas.clear();
+        currentShapesTable.removeAll();
+    }//GEN-LAST:event_clearButtonMouseClicked
+
+    private void mouseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mouseButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_mouseButtonActionPerformed
+
+    private void mouseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseButtonMouseClicked
+        // TODO add your handling code here:
+        currentShapeSelected = CurrentShape.NONE;
+        canvas.selectedShape=null;
+        repaint();
+    }//GEN-LAST:event_mouseButtonMouseClicked
+
+    private void canvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseDragged
         int endX = evt.getX();
         int endY = evt.getY();
         int sY = Math.min(startY, endY);
@@ -439,6 +464,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
 
+        if(dragging){
+            canvas.list.remove(shapeCount);
+        }
         //canvas.addShape();
         switch (currentShapeSelected) {
             case RECTANGLE:
@@ -461,27 +489,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 break;
 
         }
-    }//GEN-LAST:event_canvasMouseReleased
-
-    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
-        // TODO add your handling code here:
-        canvas.clear();
-        currentShapesTable.removeAll();
-    }//GEN-LAST:event_clearButtonMouseClicked
-
-    private void mouseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mouseButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_mouseButtonActionPerformed
-
-    private void mouseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseButtonMouseClicked
-        // TODO add your handling code here:
-        currentShapeSelected = CurrentShape.NONE;
-        canvas.selectedShape=null;
-        repaint();
-    }//GEN-LAST:event_mouseButtonMouseClicked
-
-    private void canvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseDragged
-        // move the currently selected shape
+        dragging = true;
     }//GEN-LAST:event_canvasMouseDragged
 
     /**
