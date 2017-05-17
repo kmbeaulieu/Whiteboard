@@ -54,8 +54,20 @@ public class Canvas extends JPanel {
         return selectedShape;
     }
 
+    /**
+     * Remove the currently selected shape. If nothing is selected, do nothing.
+     */
+    public void remove() {
+        if (selectedShape != null) {
+            list.remove(selectedShape);
+            selectedShape = null;
+            repaint();
+        }
+    }
+
     public void clear() {
         list.clear();
+        selectedShape=null;
         repaint();
     }
 
@@ -63,7 +75,7 @@ public class Canvas extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         //draw all the shapes!
-        list.forEach(shape ->{
+        list.forEach(shape -> {
             if (shape == selectedShape) {
                 shape.draw(g);
                 Point p = shape.getCenterOfBounds();

@@ -21,7 +21,7 @@ import javax.swing.table.TableModel;
 public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private static Color currentColor = Color.GRAY;
-    private CurrentShape currentShapeSelected = CurrentShape.NONE;
+   // private CurrentShape currentShapeSelected = CurrentShape.NONE;
     private int startX = 0;
     private int startY = 0;
     private boolean dragging = false;
@@ -40,19 +40,19 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 
     }
 
-    private enum CurrentShape {
-        RECTANGLE("RECTANGLE"), OVAL("RECTANGLE"), LINE("RECTANGLE"), TEXT("RECTANGLE"), NONE("");
-
-        String shapeName;
-
-        CurrentShape(String s) {
-            shapeName = s.toUpperCase();
-        }
-
-        public String getName() {
-            return shapeName;
-        }
-    }
+//    private enum CurrentShape {
+//        RECTANGLE("RECTANGLE"), OVAL("OVAL"), LINE("LINE"), TEXT("TEXT"), NONE("");
+//
+//        String shapeName;
+//
+//        CurrentShape(String s) {
+//            shapeName = s.toUpperCase();
+//        }
+//
+//        public String getName() {
+//            return shapeName;
+//        }
+//    }
 
     /**
      * Creates new form WhiteBoardEditor
@@ -70,6 +70,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenu2 = new javax.swing.JMenu();
         box = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
         createShapeLabel = new javax.swing.JLabel();
@@ -90,7 +93,14 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         clearButton = new javax.swing.JButton();
         mouseButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
         canvas = new Canvas();
+
+        jMenu1.setText("File");
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Edit");
+        jMenuBar1.add(jMenu2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -124,6 +134,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 addOvalButtonMouseClicked(evt);
             }
         });
+        addOvalButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addOvalButtonActionPerformed(evt);
+            }
+        });
 
         addLineButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         addLineButton.setText("Line");
@@ -134,31 +149,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 addLineButtonMouseClicked(evt);
             }
         });
-
-        javax.swing.GroupLayout shapePanel1Layout = new javax.swing.GroupLayout(shapePanel1);
-        shapePanel1.setLayout(shapePanel1Layout);
-        shapePanel1Layout.setHorizontalGroup(
-            shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shapePanel1Layout.createSequentialGroup()
-                .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(66, 66, 66))
-        );
-
-        shapePanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addOvalButton, addRectangleButton});
-
-        shapePanel1Layout.setVerticalGroup(
-            shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        shapePanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addLineButton, addOvalButton, addRectangleButton});
 
         textButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textButton.setText("Text");
@@ -181,7 +171,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(textPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textField)
+                    .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
                     .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -195,8 +185,40 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                         .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(fontChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
+
+        javax.swing.GroupLayout shapePanel1Layout = new javax.swing.GroupLayout(shapePanel1);
+        shapePanel1.setLayout(shapePanel1Layout);
+        shapePanel1Layout.setHorizontalGroup(
+            shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shapePanel1Layout.createSequentialGroup()
+                .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(66, 66, 66))
+            .addGroup(shapePanel1Layout.createSequentialGroup()
+                .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        shapePanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addOvalButton, addRectangleButton});
+
+        shapePanel1Layout.setVerticalGroup(
+            shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(shapePanel1Layout.createSequentialGroup()
+                .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addRectangleButton)
+                    .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2))
+        );
+
+        shapePanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addLineButton, addOvalButton, addRectangleButton});
 
         currentShapesLabel.setFont(currentShapesLabel.getFont().deriveFont(currentShapesLabel.getFont().getSize()+3f));
         currentShapesLabel.setText("Current Shapes");
@@ -250,14 +272,14 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         currentColorPreviewPanel.setLayout(currentColorPreviewPanelLayout);
         currentColorPreviewPanelLayout.setHorizontalGroup(
             currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 138, Short.MAX_VALUE)
+            .addGap(0, 167, Short.MAX_VALUE)
         );
         currentColorPreviewPanelLayout.setVerticalGroup(
             currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 35, Short.MAX_VALUE)
         );
 
-        colorPickerPanel.add(currentColorPreviewPanel, java.awt.BorderLayout.EAST);
+        colorPickerPanel.add(currentColorPreviewPanel, java.awt.BorderLayout.CENTER);
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getSize()+3f));
         jLabel1.setText("2. Pick a color");
@@ -270,7 +292,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
         });
 
-        mouseButton.setText("mouse");
+        mouseButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        mouseButton.setText("Select");
         mouseButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 mouseButtonMouseClicked(evt);
@@ -282,46 +305,53 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
         });
 
+        deleteButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        deleteButton.setText("Delete");
+        deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                deleteButtonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(controlPanelLayout.createSequentialGroup()
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(currentShapesLabel)
-                    .addComponent(jLabel1))
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addComponent(textPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(shapePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addComponent(colorPickerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addComponent(createShapeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deleteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(mouseButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton))
+            .addGroup(controlPanelLayout.createSequentialGroup()
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(currentShapesLabel))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(createShapeLabel)
-                        .addComponent(clearButton))
-                    .addComponent(mouseButton))
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(createShapeLabel)
+                    .addComponent(clearButton)
+                    .addComponent(mouseButton)
+                    .addComponent(deleteButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shapePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(4, 4, 4)
                 .addComponent(colorPickerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(currentShapesLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE))
+                .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
         );
 
         box.add(controlPanel, java.awt.BorderLayout.WEST);
@@ -348,7 +378,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         canvas.setLayout(canvasLayout);
         canvasLayout.setHorizontalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 397, Short.MAX_VALUE)
+            .addGap(0, 368, Short.MAX_VALUE)
         );
         canvasLayout.setVerticalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -375,15 +405,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // TODO add your handling code here:
         //1) make current shape rectangle
         //2) ??
-        currentShapeSelected = CurrentShape.RECTANGLE;
-        canvas.selectedShape = null;
+//        currentShapeSelected = CurrentShape.RECTANGLE;
+//        canvas.selectedShape = null;
+        canvas.addShape(new DRectModel(10,10,20,20,Color.GRAY));
         canvas.repaint();
-
     }//GEN-LAST:event_addRectangleButtonMouseClicked
 
     private void addOvalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addOvalButtonMouseClicked
-        currentShapeSelected = CurrentShape.OVAL;
-        canvas.selectedShape = null;
+//        currentShapeSelected = CurrentShape.OVAL;
+//        canvas.selectedShape = null;
+        canvas.addShape(new DOvalModel(10,10,20,20,Color.GRAY));
         canvas.repaint();
 
     }//GEN-LAST:event_addOvalButtonMouseClicked
@@ -392,8 +423,10 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // TODO add your handling code here:
         //1) make current shape line
         //2) ??
-        currentShapeSelected = CurrentShape.LINE;
-        canvas.selectedShape = null;
+        //currentShapeSelected = CurrentShape.LINE;
+       // canvas.selectedShape = null;
+        canvas.addShape(new DLineModel(10,10,20,20,Color.GRAY));
+        //should whiteboard call canvas.repaint or should addshape have the repaint?
         canvas.repaint();
     }//GEN-LAST:event_addLineButtonMouseClicked
 
@@ -422,6 +455,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 canvas.selectedShape = shape;
                 //refresh to draw the x on the shape
                 repaint();
+                //TODO highlight currentshape in the table?
             }
         });
 
@@ -437,6 +471,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
 
         dragging = false;
+        canvas.selectedShape=null;
     }//GEN-LAST:event_canvasMouseReleased
 
     private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
@@ -451,7 +486,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private void mouseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseButtonMouseClicked
         // TODO add your handling code here:
-        currentShapeSelected = CurrentShape.NONE;
+//        currentShapeSelected = CurrentShape.NONE;
         canvas.selectedShape=null;
         repaint();
     }//GEN-LAST:event_mouseButtonMouseClicked
@@ -464,33 +499,45 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
 
-        if(dragging){
+        if(dragging && !canvas.list.isEmpty()){
             canvas.list.remove(shapeCount);
         }
+        //TODO move shape or move knobs
+        
         //canvas.addShape();
-        switch (currentShapeSelected) {
-            case RECTANGLE:
-                DRectModel r = new DRectModel(sX, sY, w, h, currentColor);
-                canvas.addShape(r);
-                addToTable(r);
-                repaint();
-                break;
-            case OVAL:
-                canvas.addShape(new DOvalModel(sX, sY, w, h, currentColor));
-                repaint();
-                break;
-            case LINE:
-                canvas.addShape(new DLineModel(startX, startY, endX, endY, currentColor));
-                repaint();
-                break;
-            case NONE:
-                break;
-            default:
-                break;
-
-        }
+//        switch (currentShapeSelected) {
+//            case RECTANGLE:
+//                DRectModel r = new DRectModel(sX, sY, w, h, currentColor);
+//                canvas.addShape(r);
+//                addToTable(r);
+//                repaint();
+//                break;
+//            case OVAL:
+//                canvas.addShape(new DOvalModel(sX, sY, w, h, currentColor));
+//                repaint();
+//                break;
+//            case LINE:
+//                canvas.addShape(new DLineModel(startX, startY, endX, endY, currentColor));
+//                repaint();
+//                break;
+//            case NONE:
+//                break;
+//            default:
+//                break;
+//
+//        }
         dragging = true;
     }//GEN-LAST:event_canvasMouseDragged
+
+    private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_addOvalButtonActionPerformed
+
+    private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
+        // TODO add your handling code here:
+        canvas.remove();
+    }//GEN-LAST:event_deleteButtonMouseClicked
 
     /**
      * @param args the command line arguments
@@ -541,8 +588,12 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private javax.swing.JPanel currentColorPreviewPanel;
     private javax.swing.JLabel currentShapesLabel;
     private javax.swing.JTable currentShapesTable;
+    private javax.swing.JButton deleteButton;
     private java.awt.Choice fontChooser;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JButton mouseButton;
     private javax.swing.JPanel shapePanel1;
     private javax.swing.JScrollPane tableScrollPane;
