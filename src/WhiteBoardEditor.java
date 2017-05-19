@@ -95,6 +95,13 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         mouseButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         canvas = new Canvas();
+        jMenuBar2 = new javax.swing.JMenuBar();
+        jMenu3 = new javax.swing.JMenu();
+        saveFileMenuItem = new javax.swing.JMenuItem();
+        openFileMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        startServerMenuItem = new javax.swing.JMenuItem();
+        startClientMenuItem = new javax.swing.JMenuItem();
 
         jMenu1.setText("File");
         jMenuBar1.add(jMenu1);
@@ -387,6 +394,49 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         box.add(canvas, java.awt.BorderLayout.CENTER);
 
+        jMenu3.setText("File");
+
+        saveFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveFileMenuItem.setText("save file");
+        saveFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveFileMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(saveFileMenuItem);
+
+        openFileMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        openFileMenuItem.setText("open file...");
+        openFileMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openFileMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(openFileMenuItem);
+        jMenu3.add(jSeparator1);
+
+        startServerMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        startServerMenuItem.setText("start server");
+        startServerMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startServerMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(startServerMenuItem);
+
+        startClientMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK));
+        startClientMenuItem.setText("start client");
+        startClientMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startClientMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu3.add(startClientMenuItem);
+
+        jMenuBar2.add(jMenu3);
+
+        setJMenuBar(jMenuBar2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -498,10 +548,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int sX = Math.min(startX, endX);
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
-
-        if(dragging && !canvas.list.isEmpty()){
-            canvas.list.remove(shapeCount);
-        }
+//        if(dragging && !canvas.list.isEmpty()){
+//            canvas.list.remove(shapeCount);
+//        }
         //TODO move shape or move knobs
         
         //canvas.addShape();
@@ -538,6 +587,28 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // TODO add your handling code here:
         canvas.remove();
     }//GEN-LAST:event_deleteButtonMouseClicked
+
+    private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
+        // TODO add your handling code here:
+                    System.out.println("you clicked start client!");
+
+    }//GEN-LAST:event_startClientMenuItemActionPerformed
+
+    private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
+            // TODO add your handling code here:
+            System.out.println("you clicked save!");
+    }//GEN-LAST:event_saveFileMenuItemActionPerformed
+
+    private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
+        // TODO add your handling code here:
+            System.out.println("you clicked open!");
+    }//GEN-LAST:event_openFileMenuItemActionPerformed
+
+    private void startServerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerMenuItemActionPerformed
+        // TODO add your handling code here:
+                    System.out.println("you clicked start server!");
+
+    }//GEN-LAST:event_startServerMenuItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -593,9 +664,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuBar jMenuBar2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JButton mouseButton;
+    private javax.swing.JMenuItem openFileMenuItem;
+    private javax.swing.JMenuItem saveFileMenuItem;
     private javax.swing.JPanel shapePanel1;
+    private javax.swing.JMenuItem startClientMenuItem;
+    private javax.swing.JMenuItem startServerMenuItem;
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JButton textButton;
     private javax.swing.JTextField textField;
