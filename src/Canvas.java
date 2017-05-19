@@ -81,6 +81,7 @@ public class Canvas extends JPanel {
                 Point p = shape.getCenterOfBounds();
                 g.setColor(Color.RED);
                 g.drawString("x", p.x, p.y);
+                shape.getKnobs().paintComponent(g);
             } else {
                 shape.draw(g);
             }

@@ -96,7 +96,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="shapePanel1" alignment="0" pref="0" max="32767" attributes="0"/>
+                  <Component id="shapePanel1" alignment="0" max="32767" attributes="0"/>
                   <Component id="colorPickerPanel" alignment="0" max="32767" attributes="0"/>
                   <Component id="tableScrollPane" alignment="0" pref="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
@@ -194,7 +194,7 @@
                     <Property name="text" type="java.lang.String" value="Rectangle"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addRectangleButtonMouseClicked"/>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addRectangleButtonMousePressed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="addOvalButton">
@@ -211,7 +211,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addOvalButtonMouseClicked"/>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addOvalButtonMousePressed"/>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addOvalButtonActionPerformed"/>
                   </Events>
                 </Component>
@@ -229,7 +229,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addLineButtonMouseClicked"/>
+                    <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="addLineButtonMousePressed"/>
                   </Events>
                 </Component>
                 <Container class="javax.swing.JPanel" name="textPanel">
@@ -450,9 +450,9 @@
           </Properties>
           <Events>
             <EventHandler event="mouseDragged" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="canvasMouseDragged"/>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="canvasMouseClicked"/>
             <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="canvasMousePressed"/>
             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="canvasMouseReleased"/>
+            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="canvasComponentResized"/>
           </Events>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
