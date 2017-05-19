@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import javax.swing.JColorChooser;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -25,7 +26,13 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private int startX = 0;
     private int startY = 0;
     private boolean dragging = false;
-    private int shapeCount = 0;
+    private final int defaultSize = 60;
+    private int shapeSpacing = 10;
+    private int nextFreeX = shapeSpacing;
+    private int nextFreeY = shapeSpacing;
+    private int xBound = 368;
+    private int yBound = 398;
+    private boolean resizing = false;
 
     private void addToTable(DRectModel r) {
         //TODO
@@ -127,8 +134,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         addRectangleButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         addRectangleButton.setText("Rectangle");
         addRectangleButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addRectangleButtonMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                addRectangleButtonMousePressed(evt);
             }
         });
 
@@ -137,8 +144,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         addOvalButton.setMaximumSize(new java.awt.Dimension(93, 25));
         addOvalButton.setMinimumSize(new java.awt.Dimension(93, 25));
         addOvalButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addOvalButtonMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                addOvalButtonMousePressed(evt);
             }
         });
         addOvalButton.addActionListener(new java.awt.event.ActionListener() {
@@ -152,8 +159,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         addLineButton.setMaximumSize(new java.awt.Dimension(93, 25));
         addLineButton.setMinimumSize(new java.awt.Dimension(93, 25));
         addLineButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addLineButtonMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                addLineButtonMousePressed(evt);
             }
         });
 
@@ -324,7 +331,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(shapePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(shapePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(colorPickerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createSequentialGroup()
@@ -370,14 +377,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
         });
         canvas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                canvasMouseClicked(evt);
-            }
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 canvasMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 canvasMouseReleased(evt);
+            }
+        });
+        canvas.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                canvasComponentResized(evt);
             }
         });
 
@@ -450,36 +459,28 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void addRectangleButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMouseClicked
-        // TODO add your handling code here:
-        //1) make current shape rectangle
-        //2) ??
-//        currentShapeSelected = CurrentShape.RECTANGLE;
-//        canvas.selectedShape = null;
-        canvas.addShape(new DRectModel(10,10,20,20,Color.GRAY));
+    private void addShapeToCanvas(String shapeType){
+        if(shapeType.equals("rectangle")){
+            canvas.addShape(new DRectModel(nextFreeX,nextFreeY,defaultSize,defaultSize,Color.GRAY));
+        }else if(shapeType.equals("oval")){
+            canvas.addShape(new DOvalModel(nextFreeX,nextFreeY,defaultSize,defaultSize,Color.GRAY));
+        }else if(shapeType.equals("line")){
+            canvas.addShape(new DLineModel(nextFreeX,nextFreeY,nextFreeX + defaultSize,nextFreeY + defaultSize,Color.GRAY));
+        }else if(shapeType.equals("text")){
+            
+        }else{
+            //nothing
+        }
         canvas.repaint();
-    }//GEN-LAST:event_addRectangleButtonMouseClicked
-
-    private void addOvalButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addOvalButtonMouseClicked
-//        currentShapeSelected = CurrentShape.OVAL;
-//        canvas.selectedShape = null;
-        canvas.addShape(new DOvalModel(10,10,20,20,Color.GRAY));
-        canvas.repaint();
-
-    }//GEN-LAST:event_addOvalButtonMouseClicked
-
-    private void addLineButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addLineButtonMouseClicked
-        // TODO add your handling code here:
-        //1) make current shape line
-        //2) ??
-        //currentShapeSelected = CurrentShape.LINE;
-       // canvas.selectedShape = null;
-        canvas.addShape(new DLineModel(10,10,20,20,Color.GRAY));
-        //should whiteboard call canvas.repaint or should addshape have the repaint?
-        canvas.repaint();
-    }//GEN-LAST:event_addLineButtonMouseClicked
-
+        nextFreeX += defaultSize + shapeSpacing;
+        if(nextFreeX > xBound - defaultSize){
+            nextFreeX = shapeSpacing;
+            nextFreeY += defaultSize + shapeSpacing;
+        }
+        if(nextFreeY > yBound){
+            nextFreeY = shapeSpacing;
+        }        
+    }
     private void colorChooserButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_colorChooserButtonMouseClicked
         // TODO add your handling code here:
         currentColor = JColorChooser.showDialog(rootPane, "Pick a color", currentColor);
@@ -495,39 +496,59 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void textFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldActionPerformed
-
-    private void canvasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseClicked
-        // see if you clicked on a shape
-        Point p = new Point(evt.getX(), evt.getY());
-        canvas.list.forEach(shape -> {
-            if (shape.getBounds().contains(p)) {
+    private boolean clickedWithinShape(Point p){
+        int shapeCount = canvas.list.size();
+        for(int i = 0; i < shapeCount ; i++){
+            DShape shape = canvas.list.get(i);
+            if(shape.getBounds().contains(p)){
                 //select the shape
                 canvas.selectedShape = shape;
                 //refresh to draw the x on the shape
                 repaint();
-                //TODO highlight currentshape in the table?
+                return true;
             }
-        });
-
-    }//GEN-LAST:event_canvasMouseClicked
-
+        }
+        return false;
+    }
     private void canvasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMousePressed
         // start a drag
         startX = evt.getX();
         startY = evt.getY();
-        shapeCount = canvas.list.size();
+        Point p = new Point(evt.getX(), evt.getY());
+        if(clickedWithinShape(p)){
+            System.out.println("within shape");
+            return;
+        }
+        // if dragging within the knobs resize shape
+        Knob knobs = canvas.selectedShape.getKnobs();
+        if(knobs != null){
+            if(knobs.contains(p)){
+                // resize shape
+                resizing = true;
+
+            }else{ // move shape
+                resizing = false;
+            }
+        }
+
+        canvas.selectedShape = null; // unselect the shape if clicked on white area
+        repaint(); // refresh canvas
     }//GEN-LAST:event_canvasMousePressed
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
 
         dragging = false;
         canvas.selectedShape=null;
+        resizing = false;
     }//GEN-LAST:event_canvasMouseReleased
 
     private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
         // TODO add your handling code here:
         canvas.clear();
         currentShapesTable.removeAll();
+        shapeSpacing = 10;
+        nextFreeX = shapeSpacing;
+        nextFreeY = shapeSpacing;
     }//GEN-LAST:event_clearButtonMouseClicked
 
     private void mouseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mouseButtonActionPerformed
@@ -548,9 +569,13 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int sX = Math.min(startX, endX);
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
-//        if(dragging && !canvas.list.isEmpty()){
-//            canvas.list.remove(shapeCount);
-//        }
+
+
+        Point p = new Point(endX, endY);
+        // if shape is currently selected
+        if(resizing){
+            System.out.println("resizing");
+        }
         //TODO move shape or move knobs
         
         //canvas.addShape();
@@ -588,6 +613,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         canvas.remove();
     }//GEN-LAST:event_deleteButtonMouseClicked
 
+
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
         // TODO add your handling code here:
                     System.out.println("you clicked start client!");
@@ -609,6 +635,25 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                     System.out.println("you clicked start server!");
 
     }//GEN-LAST:event_startServerMenuItemActionPerformed
+
+    private void addRectangleButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMousePressed
+        addShapeToCanvas("rectangle");
+    }//GEN-LAST:event_addRectangleButtonMousePressed
+
+    private void addOvalButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addOvalButtonMousePressed
+        addShapeToCanvas("oval");
+    }//GEN-LAST:event_addOvalButtonMousePressed
+
+    private void addLineButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addLineButtonMousePressed
+        addShapeToCanvas("line");
+    }//GEN-LAST:event_addLineButtonMousePressed
+
+    private void canvasComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_canvasComponentResized
+        Rectangle r = canvas.getBounds();
+        xBound = r.width;
+        yBound = r.height;
+    }//GEN-LAST:event_canvasComponentResized
+
 
     /**
      * @param args the command line arguments
