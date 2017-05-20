@@ -472,7 +472,7 @@
                 <Property name="text" type="java.lang.String" value="CLEAR"/>
               </Properties>
               <Events>
-                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearButtonMouseClicked"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="clearButtonMousePressed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JButton" name="mouseButton">

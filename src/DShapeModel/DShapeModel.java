@@ -128,7 +128,7 @@ public class DShapeModel implements ModelListener {
 
     @Override
     public void modelChanged(DShapeModel model) {
-        System.out.println("Model changed");
+        
     }
 
     @Override

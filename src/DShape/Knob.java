@@ -24,6 +24,8 @@ public class Knob extends JComponent
 	Point thirdPoint;
 	Point fourthPoint;
 	Color color;
+        private final int ks = 11; // knob size
+        private final int dx = ks - 5;
 	public Knob(Point first, Point second, Point third , Point fourth)
 	{
 		color= Color.BLACK;
@@ -54,22 +56,22 @@ public class Knob extends JComponent
 		g.setColor(color);
 		if(secondPoint==null)
 		{
-			g.fillRect(firstPoint.x-5,firstPoint.y-5, 10, 10);
+			g.fillRect(firstPoint.x-dx,firstPoint.y-dx, ks, ks);
 			return;
 		}
 		
 		
 		if(thirdPoint.x!=0)
 		{
-		g.fillRect(firstPoint.x-5,firstPoint.y-5, 10, 10);
-		g.fillRect(secondPoint.x-5, secondPoint.y-5, 10, 10);
-		g.fillRect(thirdPoint.x-5,thirdPoint.y-5, 10, 10);
-		g.fillRect(fourthPoint.x-5,fourthPoint.y-5, 10, 10);
+		g.fillRect(firstPoint.x-dx,firstPoint.y-dx, ks, ks);
+		g.fillRect(secondPoint.x-dx, secondPoint.y-dx, ks, ks);
+		g.fillRect(thirdPoint.x-dx,thirdPoint.y-dx, ks, ks);
+		g.fillRect(fourthPoint.x-dx,fourthPoint.y-dx, ks, ks);
 		}
 		else
 		{
-			g.fillRect(firstPoint.x-5,firstPoint.y-5, 10, 10);
-			g.fillRect(secondPoint.x-5, secondPoint.y-5, 10, 10);
+			g.fillRect(firstPoint.x-dx,firstPoint.y-dx, ks, ks);
+			g.fillRect(secondPoint.x-dx, secondPoint.y-dx, ks, ks);
 		}
 		
 		
@@ -82,74 +84,40 @@ public class Knob extends JComponent
 		
 	}
 	
-	public boolean contains(Point p)
+	public int getKnobPoint(Point p)
 	{
 		if(thirdPoint.x!=0)
 		{
 		
-		if(new Rectangle(firstPoint.x-5,firstPoint.y-5, 10, 10).contains(p))
+		if(new Rectangle(firstPoint.x-dx,firstPoint.y-dx, ks, ks).contains(p))
 		{
-			return true;
+			return 1;
 		}
-		if(new Rectangle(secondPoint.x-5, secondPoint.y-5, 10, 10).contains(p))
+		if(new Rectangle(secondPoint.x-dx, secondPoint.y-dx, ks, ks).contains(p))
 		{
-			return true;
+			return 2;
 		}
-		if(new Rectangle(thirdPoint.x-5,thirdPoint.y-5, 10, 10).contains(p))
+		if(new Rectangle(thirdPoint.x-dx,thirdPoint.y-dx, ks, ks).contains(p))
 		{
-			return true;
+			return 3;
 		}
-		if(new Rectangle(fourthPoint.x-5,fourthPoint.y-5, 10, 10).contains(p))
+		if(new Rectangle(fourthPoint.x-dx,fourthPoint.y-dx, ks, ks).contains(p))
 		{
-			return true;
+			return 4;
 		}
 		}
 		else
 		{
-			if(new Rectangle(firstPoint.x-5,firstPoint.y-5, 10, 10).contains(p))
+			if(new Rectangle(firstPoint.x-dx,firstPoint.y-dx, ks, ks).contains(p))
 			{
-				return true;
+				return 1;
 			}
-			if(new Rectangle(secondPoint.x-5, secondPoint.y-5, 10, 10).contains(p))
+			if(new Rectangle(secondPoint.x-dx, secondPoint.y-dx, ks, ks).contains(p))
 			{
-				return true;
+				return 2;
 			}
 		}
-		return false;
+		return 0;
 	}
-        public boolean containsFirstKnob(Point p){
-            return new Rectangle(firstPoint.x-5,firstPoint.y-5, 10, 10).contains(p);
-        }
-        public boolean containsSecondKnob(Point p){
-            return new Rectangle(secondPoint.x-5, secondPoint.y-5, 10, 10).contains(p);
-        }
-        public boolean containsThirdKnob(Point p){
-            return new Rectangle(thirdPoint.x-5,thirdPoint.y-5, 10, 10).contains(p);
-        }
-        public boolean containsFourthKnob(Point p){
-            return new Rectangle(fourthPoint.x-5,fourthPoint.y-5, 10, 10).contains(p);
-        }
-	
-	public Point getFirstKnob(Point p)
-	{
-		if(firstPoint.x-5<p.x && p.x<firstPoint.x+5 && firstPoint.y-5<p.y && p.y<firstPoint.y+5)
-		{
-		return firstPoint;
-		}
-		if(secondPoint.x-5<p.x && p.x<secondPoint.x+5 && secondPoint.y-5<p.y && p.y<secondPoint.y+5)
-		{
-		return secondPoint;
-		}
-		if(thirdPoint.x-5<p.x && p.x<thirdPoint.x+5 && thirdPoint.y-5<p.y && p.y<thirdPoint.y+5)
-		{
-			return thirdPoint;
-		}
-		if(fourthPoint.x-5<p.x && p.x<fourthPoint.x+5 && fourthPoint.y-5<p.y && p.y<fourthPoint.y+5)
-		{
-			return fourthPoint;
-		}
-		return null;
-	}
-
 	
 }
