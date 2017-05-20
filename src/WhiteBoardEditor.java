@@ -3,6 +3,7 @@ import DShape.*;
 import DShapeModel.*;
 import java.util.ArrayList;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
@@ -103,7 +104,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         currentColorPreviewPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         clearButton = new javax.swing.JButton();
-        mouseButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         canvas = new Canvas();
         jMenuBar2 = new javax.swing.JMenuBar();
@@ -152,11 +152,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 addOvalButtonMousePressed(evt);
             }
         });
-        addOvalButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addOvalButtonActionPerformed(evt);
-            }
-        });
 
         addLineButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         addLineButton.setText("Line");
@@ -170,6 +165,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         textButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textButton.setText("Text");
+        textButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                textButtonMousePressed(evt);
+            }
+        });
 
         textField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textField.setText("Enter Text");
@@ -313,19 +313,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
         });
 
-        mouseButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        mouseButton.setText("Select");
-        mouseButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                mouseButtonMouseClicked(evt);
-            }
-        });
-        mouseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mouseButtonActionPerformed(evt);
-            }
-        });
-
         deleteButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         deleteButton.setText("Delete");
         deleteButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -346,8 +333,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(mouseButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(clearButton))
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -361,7 +346,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(createShapeLabel)
                     .addComponent(clearButton)
-                    .addComponent(mouseButton)
                     .addComponent(deleteButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shapePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -474,7 +458,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         } else if (shapeType.equals("line")) {
             canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
         } else if (shapeType.equals("text")) {
-
+            canvas.addShape(new DTextModel(nextFreeX,nextFreeY,nextFreeX+defaultSize,nextFreeY+defaultSize,Color.GRAY, textField.getText(),fontChooser.getSelectedItem()));
         } else {
             //nothing
         }
@@ -555,17 +539,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         moving = false;
     }//GEN-LAST:event_canvasMouseReleased
 
-    private void mouseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mouseButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_mouseButtonActionPerformed
-
-    private void mouseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseButtonMouseClicked
-        // TODO add your handling code here:
-//        currentShapeSelected = CurrentShape.NONE;
-        canvas.selectedShape = null;
-        repaint();
-    }//GEN-LAST:event_mouseButtonMouseClicked
-
     private void canvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseDragged
         int endX = evt.getX();
         int endY = evt.getY();
@@ -624,11 +597,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_canvasMouseDragged
 
-    private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_addOvalButtonActionPerformed
-
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         // TODO add your handling code here:
         canvas.remove();
@@ -682,6 +650,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         nextFreeX = shapeSpacing;
         nextFreeY = shapeSpacing;
     }//GEN-LAST:event_clearButtonMousePressed
+
+    private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
+        // TODO add your handling code here:
+        addShapeToCanvas("text");
+    }//GEN-LAST:event_textButtonMousePressed
 
     /**
      * @param args the command line arguments
@@ -741,7 +714,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JButton mouseButton;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JMenuItem saveFileMenuItem;
     private javax.swing.JPanel shapePanel1;

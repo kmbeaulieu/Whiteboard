@@ -1,14 +1,53 @@
 package DShapeModel;
 
 import java.awt.Color;
+import java.awt.Font;
 
 public class DTextModel extends DShapeModel {
 
-    public DTextModel(){
+    private String text;
+    private Font font;
+
+    public DTextModel() {
         super();
     }
-    
-    public DTextModel(int x, int y, int w, int h, Color c){
-        super(x,y,w,h,c);
+
+    public DTextModel(int x, int y, int w, int h, Color c, String text, String fontName) {
+        super(x, y, w, h, c);
+        this.text = text;
+        //WHAT I WANTED TO DO
+        // Font f = Font.getFont(fontName, Font.getFont(Font.DIALOG));
+        //THEN JUST STORE f AS THE ATTRIBUTE but nooooo, the above code returns null.
+
+        //try the font for the given name, else use the dialog font as default
+        Font f = Font.decode(fontName);
+        if (f == null) {
+            f = Font.decode("Dialog");
+        }
+        this.font = f;
     }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void setFont(String fontName) {
+        Font f = Font.getFont(fontName, Font.getFont(Font.DIALOG));
+
+        this.font = f;
+    }
+
+    @Override
+    public String toString() {
+        return "DTextModel{" + "x= " + getX() + ", y= " + getY() + ", w= " + getW() + ", h= " + getH() + ", color = " + getColor() + ", text=" + text + ", font=" + font + '}';
+    }
+
 }

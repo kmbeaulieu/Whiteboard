@@ -1,6 +1,7 @@
 package DShape;
 
-import DShapeModel.DShapeModel;
+import DShapeModel.*;
+import java.awt.Font;
 import java.awt.Graphics;
 
 public class DText extends DShape {
@@ -12,6 +13,16 @@ public class DText extends DShape {
     @Override
 	public void draw(Graphics g){
 		super.draw(g);
+                DTextModel dtm = (DTextModel)model;
+                g.setFont(dtm.getFont());
+                g.drawString(dtm.getText(), dtm.getX(), dtm.getY());
 		//do custom text stuff here
 	}
+
+    @Override
+    public String toString() {
+        DTextModel dtm = (DTextModel) model;
+        return "DText{" + dtm.toString() +  '}';
+    }
+        
 }
