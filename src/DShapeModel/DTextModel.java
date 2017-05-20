@@ -39,8 +39,9 @@ public class DTextModel extends DShapeModel {
         return font;
     }
 
-    public void setFont(String fontName) {
-        Font f = Font.getFont(fontName, Font.getFont(Font.DIALOG));
+    public void setFont(Font f) {
+        //this doesnt work, change to this if it can get working so that the whiteboard/canvas doesnt have to handle if it is a font or not
+//        Font f = Font.getFont(fontName, Font.getFont(Font.DIALOG));
 
         this.font = f;
     }

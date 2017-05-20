@@ -348,6 +348,9 @@
                           <Font name="Tahoma" size="14" style="0"/>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="fontChooserItemStateChanged"/>
+                      </Events>
                       <AuxValues>
                         <AuxValue name="JavaCodeGenerator_InitCodePost" type="java.lang.String" value="for (String font : fonts) {&#xa;            fontChooser.add(font);&#xa;        }   "/>
                       </AuxValues>

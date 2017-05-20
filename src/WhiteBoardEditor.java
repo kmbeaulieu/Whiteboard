@@ -183,6 +183,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         for (String font : fonts) {
             fontChooser.add(font);
         }
+        fontChooser.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                fontChooserItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout textPanelLayout = new javax.swing.GroupLayout(textPanel);
         textPanel.setLayout(textPanelLayout);
@@ -697,6 +702,15 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             repaint();
         }//if text is selected, update as you type into text box
     }//GEN-LAST:event_textFieldKeyTyped
+
+    private void fontChooserItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fontChooserItemStateChanged
+        // if a text obj selected, update the font when changed!
+        if(canvas.selectedShape instanceof DText){
+            DText dtxt = (DText) canvas.selectedShape;
+            dtxt.setFont(Font.decode(fontChooser.getSelectedItem()));
+            repaint();
+        }
+    }//GEN-LAST:event_fontChooserItemStateChanged
 
     /**
      * @param args the command line arguments

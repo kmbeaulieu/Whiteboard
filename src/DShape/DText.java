@@ -1,6 +1,7 @@
 package DShape;
 
 import DShapeModel.*;
+import java.awt.Font;
 import java.awt.Graphics;
 
 public class DText extends DShape {
@@ -22,6 +23,11 @@ public class DText extends DShape {
         public void setText(String text){
             DTextModel dtm = (DTextModel) model;
             dtm.setText(text);
+        }
+        
+        public void setFont(Font f){
+            DTextModel dtm = (DTextModel) model;
+            dtm.setFont(f);
         }
 
     @Override
