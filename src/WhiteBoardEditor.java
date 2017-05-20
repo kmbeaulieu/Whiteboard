@@ -519,44 +519,33 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         return false;
     }
     private void canvasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMousePressed
-        // start a drag
+       // start a drag
         startX = evt.getX();
         startY = evt.getY();
         Point p = new Point(evt.getX(), evt.getY());
-        if (clickedWithinShape(p)) {
-            System.out.println("within shape");
+        
+        DShape cShape = canvas.selectedShape; // current selected shape
+        // if dragging within the knobs resize shape
+        if(cShape != null){
+            knobPoint = cShape.getKnobs().getKnobPoint(p);
+            if(knobPoint != 0){
+                resizing = true;
+                origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                return;
+
+            }else{ // move shape
+                moving = true;
+                origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+            }
+        }
+
+        if(clickedWithinShape(p)){
+            moving = true;
             return;
         }
-        // if dragging within the knobs resize shape
-        Knob knobs;
-        if(canvas.selectedShape!=null && canvas.selectedShape.getKnobs()!=null){
-                    knobs = canvas.selectedShape.getKnobs();
-      
-            resizing = knobs.contains(p); // resize shape
-            // move shape
-
-            DShape cShape = canvas.selectedShape; // current selected shape
-            // if dragging within the knobs resize shape
-            if (cShape != null) {
-                knobPoint = cShape.getKnobs().getKnobPoint(p);
-                if (knobPoint != 0) {
-                    resizing = true;
-                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
-                    return;
-
-                } else { // move shape
-                    moving = true;
-                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
-                }
-            }
-
-            if (clickedWithinShape(p)) {
-                moving = true;
-                return;
-            }
-            canvas.selectedShape = null; // unselect the shape if clicked on white area
-            repaint(); // refresh canvas
-        }
+        canvas.selectedShape = null; // unselect the shape if clicked on white area
+        repaint(); // refresh canvas
+        
     }//GEN-LAST:event_canvasMousePressed
     
 
