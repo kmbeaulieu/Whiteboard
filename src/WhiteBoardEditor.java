@@ -571,14 +571,17 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // if shape is currently selected
         if(resizing){
             if(knobPoint == 1){
-                canvas.selectedShape.setY(origSize.y - (startY - endY));
-                canvas.selectedShape.setX(origSize.x - (startX - endX));
-                canvas.selectedShape.setH(origSize.height + (startY - endY));
-                canvas.selectedShape.setW(origSize.width + (startX - endX));
+                if(canvas.selectedShape instanceof DLine){
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                }else{
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                    canvas.selectedShape.setH(origSize.height + (startY - endY));
+                    canvas.selectedShape.setW(origSize.width + (startX - endX));  
+                }
             }else if(knobPoint == 2){
                 if(canvas.selectedShape instanceof DLine){
-                    canvas.selectedShape.setY(origSize.y + (startY - endY));
-                    canvas.selectedShape.setX(origSize.x + (startX - endX));
                     canvas.selectedShape.setH(origSize.height - (startY - endY));
                     canvas.selectedShape.setW(origSize.width - (startX - endX));
                 }else{
