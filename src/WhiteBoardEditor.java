@@ -27,7 +27,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     // private CurrentShape currentShapeSelected = CurrentShape.NONE;
     private int startX = 0;
     private int startY = 0;
-    private boolean dragging = false;
     private final int defaultSize = 60;
     private int shapeSpacing = 10;
     private int nextFreeX = shapeSpacing;
@@ -35,7 +34,10 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private int xBound = 368;
     private int yBound = 398;
     private boolean resizing = false;
-    String fonts[] =GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+    String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+    private boolean moving = false;
+    private int knobPoint = 0;
+    private Rectangle origSize = null;
 
     private void addToTable(DRectModel r) {
         //TODO
@@ -306,8 +308,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         clearButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         clearButton.setText("CLEAR");
         clearButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                clearButtonMouseClicked(evt);
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                clearButtonMousePressed(evt);
             }
         });
 
@@ -510,6 +512,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 canvas.selectedShape = shape;
                 //refresh to draw the x on the shape
                 repaint();
+                origSize = new Rectangle(shape.getX(), shape.getY(), shape.getW(), shape.getH());
                 return true;
             }
         }
@@ -529,27 +532,39 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         if (knobs != null) {
             resizing = knobs.contains(p); // resize shape
             // move shape
-        }
 
-        canvas.selectedShape = null; // unselect the shape if clicked on white area
-        repaint(); // refresh canvas
+            DShape cShape = canvas.selectedShape; // current selected shape
+            // if dragging within the knobs resize shape
+            if (cShape != null) {
+                knobPoint = cShape.getKnobs().getKnobPoint(p);
+                if (knobPoint != 0) {
+                    resizing = true;
+                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                    return;
+
+                } else { // move shape
+                    moving = true;
+                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                }
+            }
+
+            if (clickedWithinShape(p)) {
+                moving = true;
+                return;
+            }
+            canvas.selectedShape = null; // unselect the shape if clicked on white area
+            repaint(); // refresh canvas
     }//GEN-LAST:event_canvasMousePressed
+    }
+
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
-
-        dragging = false;
         canvas.selectedShape = null;
         resizing = false;
+        knobPoint = 0;
+        origSize = null;
+        moving = false;
     }//GEN-LAST:event_canvasMouseReleased
-
-    private void clearButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMouseClicked
-        // TODO add your handling code here:
-        canvas.clear();
-        currentShapesTable.removeAll();
-        shapeSpacing = 10;
-        nextFreeX = shapeSpacing;
-        nextFreeY = shapeSpacing;
-    }//GEN-LAST:event_clearButtonMouseClicked
 
     private void mouseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mouseButtonActionPerformed
         // TODO add your handling code here:
@@ -569,37 +584,52 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int sX = Math.min(startX, endX);
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
-
-        Point p = new Point(endX, endY);
         // if shape is currently selected
         if (resizing) {
-            System.out.println("resizing");
-        }
-        //TODO move shape or move knobs
+            if (knobPoint == 1) {
+                if (canvas.selectedShape instanceof DLine) {
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                } else {
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                    canvas.selectedShape.setH(origSize.height + (startY - endY));
+                    canvas.selectedShape.setW(origSize.width + (startX - endX));
+                }
+            } else if (knobPoint == 2) {
+                if (canvas.selectedShape instanceof DLine) {
+                    canvas.selectedShape.setH(origSize.height - (startY - endY));
+                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                } else {
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setH(origSize.height + (startY - endY));
+                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                }
+            } else if (knobPoint == 3) {
+                canvas.selectedShape.setX(origSize.x - (startX - endX));
+                canvas.selectedShape.setH(origSize.height - (startY - endY));
+                canvas.selectedShape.setW(origSize.width + (startX - endX));
+            } else if (knobPoint == 4) {
+                canvas.selectedShape.setH(origSize.height - (startY - endY));
+                canvas.selectedShape.setW(origSize.width - (startX - endX));
+            } else {
 
-        //canvas.addShape();
-//        switch (currentShapeSelected) {
-//            case RECTANGLE:
-//                DRectModel r = new DRectModel(sX, sY, w, h, currentColor);
-//                canvas.addShape(r);
-//                addToTable(r);
-//                repaint();
-//                break;
-//            case OVAL:
-//                canvas.addShape(new DOvalModel(sX, sY, w, h, currentColor));
-//                repaint();
-//                break;
-//            case LINE:
-//                canvas.addShape(new DLineModel(startX, startY, endX, endY, currentColor));
-//                repaint();
-//                break;
-//            case NONE:
-//                break;
-//            default:
-//                break;
-//
-//        }
-        dragging = true;
+            }
+            repaint();
+            return;
+        }
+        if (moving && canvas.selectedShape != null) {
+            if (canvas.selectedShape instanceof DLine) {
+                canvas.selectedShape.setX(origSize.x - (startX - endX));
+                canvas.selectedShape.setY(origSize.y - (startY - endY));
+                canvas.selectedShape.setW(origSize.width - (startX - endX));
+                canvas.selectedShape.setH(origSize.height - (startY - endY));
+            } else {
+                canvas.selectedShape.setX(origSize.x - (startX - endX));
+                canvas.selectedShape.setY(origSize.y - (startY - endY));
+            }
+            repaint();
+        }
     }//GEN-LAST:event_canvasMouseDragged
 
     private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
@@ -651,6 +681,15 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         xBound = r.width;
         yBound = r.height;
     }//GEN-LAST:event_canvasComponentResized
+
+    private void clearButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMousePressed
+        // TODO add your handling code here:
+        canvas.clear();
+        currentShapesTable.removeAll();
+        shapeSpacing = 10;
+        nextFreeX = shapeSpacing;
+        nextFreeY = shapeSpacing;
+    }//GEN-LAST:event_clearButtonMousePressed
 
     /**
      * @param args the command line arguments
@@ -731,9 +770,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             try {
                 //set the custom port number;
                 p = Integer.valueOf(port);
-                if (p>65535 || p<0){
+                if (p > 65535 || p < 0) {
                     //too high or low so use default port
-                    p=39587;
+                    p = 39587;
                 }
             } catch (java.lang.NumberFormatException nfe) {
                 int num = JOptionPane.showConfirmDialog(this, "the port you entered was invalid, using default port 39587.");
@@ -745,9 +784,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 }
             }
         }
-        
-        
-          System.out.println(p);
+
+        System.out.println(p);
 //            Server server = new Server(p);
 //            server.listen();
     }
