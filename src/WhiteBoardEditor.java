@@ -554,8 +554,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
             canvas.selectedShape = null; // unselect the shape if clicked on white area
             repaint(); // refresh canvas
+        }
     }//GEN-LAST:event_canvasMousePressed
-    }
+    
 
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
