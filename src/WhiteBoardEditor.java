@@ -528,8 +528,10 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             return;
         }
         // if dragging within the knobs resize shape
-        Knob knobs = canvas.selectedShape.getKnobs();
-        if (knobs != null) {
+        Knob knobs;
+        if(canvas.selectedShape!=null && canvas.selectedShape.getKnobs()!=null){
+                    knobs = canvas.selectedShape.getKnobs();
+      
             resizing = knobs.contains(p); // resize shape
             // move shape
 
@@ -587,34 +589,37 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int h = Math.abs(startY - endY);
         // if shape is currently selected
         if (resizing) {
-            if (knobPoint == 1) {
-                if (canvas.selectedShape instanceof DLine) {
-                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+            switch (knobPoint) {
+                case 1:
+                    if (canvas.selectedShape instanceof DLine) {
+                        canvas.selectedShape.setY(origSize.y - (startY - endY));
+                        canvas.selectedShape.setX(origSize.x - (startX - endX));
+                    } else {
+                        canvas.selectedShape.setY(origSize.y - (startY - endY));
+                        canvas.selectedShape.setX(origSize.x - (startX - endX));
+                        canvas.selectedShape.setH(origSize.height + (startY - endY));
+                        canvas.selectedShape.setW(origSize.width + (startX - endX));
+                    }   break;
+                case 2:
+                    if (canvas.selectedShape instanceof DLine) {
+                        canvas.selectedShape.setH(origSize.height - (startY - endY));
+                        canvas.selectedShape.setW(origSize.width - (startX - endX));
+                    } else {
+                        canvas.selectedShape.setY(origSize.y - (startY - endY));
+                        canvas.selectedShape.setH(origSize.height + (startY - endY));
+                        canvas.selectedShape.setW(origSize.width - (startX - endX));
+                    }   break;
+                case 3:
                     canvas.selectedShape.setX(origSize.x - (startX - endX));
-                } else {
-                    canvas.selectedShape.setY(origSize.y - (startY - endY));
-                    canvas.selectedShape.setX(origSize.x - (startX - endX));
-                    canvas.selectedShape.setH(origSize.height + (startY - endY));
+                    canvas.selectedShape.setH(origSize.height - (startY - endY));
                     canvas.selectedShape.setW(origSize.width + (startX - endX));
-                }
-            } else if (knobPoint == 2) {
-                if (canvas.selectedShape instanceof DLine) {
+                    break;
+                case 4:
                     canvas.selectedShape.setH(origSize.height - (startY - endY));
                     canvas.selectedShape.setW(origSize.width - (startX - endX));
-                } else {
-                    canvas.selectedShape.setY(origSize.y - (startY - endY));
-                    canvas.selectedShape.setH(origSize.height + (startY - endY));
-                    canvas.selectedShape.setW(origSize.width - (startX - endX));
-                }
-            } else if (knobPoint == 3) {
-                canvas.selectedShape.setX(origSize.x - (startX - endX));
-                canvas.selectedShape.setH(origSize.height - (startY - endY));
-                canvas.selectedShape.setW(origSize.width + (startX - endX));
-            } else if (knobPoint == 4) {
-                canvas.selectedShape.setH(origSize.height - (startY - endY));
-                canvas.selectedShape.setW(origSize.width - (startX - endX));
-            } else {
-
+                    break;
+                default:
+                    break;
             }
             repaint();
             return;
