@@ -367,6 +367,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 canvasMouseDragged(evt);
             }
         });
+        canvas.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                canvasMouseWheelMoved(evt);
+            }
+        });
         canvas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 canvasMousePressed(evt);
@@ -548,7 +553,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int h = Math.abs(startY - endY);
         // if shape is currently selected
         if (resizing) {
-            int tx = 0, ty = 0, tw = 0, th = 0;
+            int tx, ty, tw, th;
             switch (knobPoint) {
                 case 1:
                     if (canvas.selectedShape instanceof DLine) {
@@ -636,11 +641,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         canvas.selectedShape.setW(w);
         canvas.selectedShape.setH(h);
     }
-    private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_addOvalButtonActionPerformed
-
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         // TODO add your handling code here:
         canvas.remove();
@@ -699,6 +699,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         // TODO add your handling code here:
         addShapeToCanvas("text");
     }//GEN-LAST:event_textButtonMousePressed
+
+    private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
+        // TODO add your handling code here:
+       int notches = evt.getWheelRotation();
+       if (notches < 0) {
+           System.out.println("Mouse wheel moved UP " + -notches);
+       } else {
+           System.out.println("Mouse wheel moved DOWN " + notches);
+       }
+    }//GEN-LAST:event_canvasMouseWheelMoved
 
     /**
      * @param args the command line arguments
