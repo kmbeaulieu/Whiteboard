@@ -699,13 +699,19 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_textFieldKeyTyped
 
     private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
-        // TODO add your handling code here:
        int notches = evt.getWheelRotation();
-       if (notches < 0) {
-           System.out.println("Mouse wheel moved UP " + -notches);
-       } else {
-           System.out.println("Mouse wheel moved DOWN " + notches);
+       if(canvas.selectedShape != null){
+           DShape cShape = canvas.selectedShape; // current selected shape
+           origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+           if (notches < 0) {
+               resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
+               repaint();
+           } else {
+               resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
+               repaint();
+           }
        }
+       
     }//GEN-LAST:event_canvasMouseWheelMoved
 
     /**
