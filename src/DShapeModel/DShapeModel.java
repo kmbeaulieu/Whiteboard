@@ -141,4 +141,11 @@ public class DShapeModel implements ModelListener {
         listeners.remove(model);
     }
 
+    @Override
+    public String toString() {
+        return "DShapeModel{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", color=" + color + ", listeners=" + listeners + '}';
+    }
+    
+    
+
 }

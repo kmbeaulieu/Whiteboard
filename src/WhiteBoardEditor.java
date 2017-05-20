@@ -4,9 +4,11 @@ import DShapeModel.*;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
@@ -22,7 +24,7 @@ import javax.swing.table.TableModel;
 public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private static Color currentColor = Color.GRAY;
-   // private CurrentShape currentShapeSelected = CurrentShape.NONE;
+    // private CurrentShape currentShapeSelected = CurrentShape.NONE;
     private int startX = 0;
     private int startY = 0;
     private boolean dragging = false;
@@ -33,6 +35,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private int xBound = 368;
     private int yBound = 398;
     private boolean resizing = false;
+    String fonts[] =GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 
     private void addToTable(DRectModel r) {
         //TODO
@@ -44,7 +47,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 //         row[3]=r.getH();
 //                DefaultTableModel model = new DefaultTableModel();
 //                model.addRow(row);
-                
+
     }
 
 //    private enum CurrentShape {
@@ -60,7 +63,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 //            return shapeName;
 //        }
 //    }
-
     /**
      * Creates new form WhiteBoardEditor
      */
@@ -176,6 +178,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         });
 
         fontChooser.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        for (String font : fonts) {
+            fontChooser.add(font);
+        }
 
         javax.swing.GroupLayout textPanelLayout = new javax.swing.GroupLayout(textPanel);
         textPanel.setLayout(textPanelLayout);
@@ -459,27 +464,27 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void addShapeToCanvas(String shapeType){
-        if(shapeType.equals("rectangle")){
-            canvas.addShape(new DRectModel(nextFreeX,nextFreeY,defaultSize,defaultSize,Color.GRAY));
-        }else if(shapeType.equals("oval")){
-            canvas.addShape(new DOvalModel(nextFreeX,nextFreeY,defaultSize,defaultSize,Color.GRAY));
-        }else if(shapeType.equals("line")){
-            canvas.addShape(new DLineModel(nextFreeX,nextFreeY,nextFreeX + defaultSize,nextFreeY + defaultSize,Color.GRAY));
-        }else if(shapeType.equals("text")){
-            
-        }else{
+    private void addShapeToCanvas(String shapeType) {
+        if (shapeType.equals("rectangle")) {
+            canvas.addShape(new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+        } else if (shapeType.equals("oval")) {
+            canvas.addShape(new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+        } else if (shapeType.equals("line")) {
+            canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
+        } else if (shapeType.equals("text")) {
+
+        } else {
             //nothing
         }
         canvas.repaint();
         nextFreeX += defaultSize + shapeSpacing;
-        if(nextFreeX > xBound - defaultSize){
+        if (nextFreeX > xBound - defaultSize) {
             nextFreeX = shapeSpacing;
             nextFreeY += defaultSize + shapeSpacing;
         }
-        if(nextFreeY > yBound){
+        if (nextFreeY > yBound) {
             nextFreeY = shapeSpacing;
-        }        
+        }
     }
     private void colorChooserButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_colorChooserButtonMouseClicked
         // TODO add your handling code here:
@@ -496,11 +501,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void textFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_textFieldActionPerformed
-    private boolean clickedWithinShape(Point p){
+    private boolean clickedWithinShape(Point p) {
         int shapeCount = canvas.list.size();
-        for(int i = 0; i < shapeCount ; i++){
+        for (int i = 0; i < shapeCount; i++) {
             DShape shape = canvas.list.get(i);
-            if(shape.getBounds().contains(p)){
+            if (shape.getBounds().contains(p)) {
                 //select the shape
                 canvas.selectedShape = shape;
                 //refresh to draw the x on the shape
@@ -515,20 +520,15 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         startX = evt.getX();
         startY = evt.getY();
         Point p = new Point(evt.getX(), evt.getY());
-        if(clickedWithinShape(p)){
+        if (clickedWithinShape(p)) {
             System.out.println("within shape");
             return;
         }
         // if dragging within the knobs resize shape
         Knob knobs = canvas.selectedShape.getKnobs();
-        if(knobs != null){
-            if(knobs.contains(p)){
-                // resize shape
-                resizing = true;
-
-            }else{ // move shape
-                resizing = false;
-            }
+        if (knobs != null) {
+            resizing = knobs.contains(p); // resize shape
+            // move shape
         }
 
         canvas.selectedShape = null; // unselect the shape if clicked on white area
@@ -538,7 +538,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
 
         dragging = false;
-        canvas.selectedShape=null;
+        canvas.selectedShape = null;
         resizing = false;
     }//GEN-LAST:event_canvasMouseReleased
 
@@ -558,7 +558,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void mouseButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mouseButtonMouseClicked
         // TODO add your handling code here:
 //        currentShapeSelected = CurrentShape.NONE;
-        canvas.selectedShape=null;
+        canvas.selectedShape = null;
         repaint();
     }//GEN-LAST:event_mouseButtonMouseClicked
 
@@ -570,14 +570,13 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int w = Math.abs(startX - endX);
         int h = Math.abs(startY - endY);
 
-
         Point p = new Point(endX, endY);
         // if shape is currently selected
-        if(resizing){
+        if (resizing) {
             System.out.println("resizing");
         }
         //TODO move shape or move knobs
-        
+
         //canvas.addShape();
 //        switch (currentShapeSelected) {
 //            case RECTANGLE:
@@ -605,7 +604,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_addOvalButtonActionPerformed
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
@@ -616,24 +615,23 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
         // TODO add your handling code here:
-                    System.out.println("you clicked start client!");
+        System.out.println("you clicked start client!");
 
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
-            // TODO add your handling code here:
-            System.out.println("you clicked save!");
+        // TODO add your handling code here:
+        System.out.println("you clicked save!");
     }//GEN-LAST:event_saveFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
         // TODO add your handling code here:
-            System.out.println("you clicked open!");
+        System.out.println("you clicked open!");
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void startServerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerMenuItemActionPerformed
-        // TODO add your handling code here:
-                    System.out.println("you clicked start server!");
-
+        String port = JOptionPane.showInputDialog(this, "Enter Port Number", "Server Setup", JOptionPane.QUESTION_MESSAGE);
+        startServer(port);
     }//GEN-LAST:event_startServerMenuItemActionPerformed
 
     private void addRectangleButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMousePressed
@@ -653,7 +651,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         xBound = r.width;
         yBound = r.height;
     }//GEN-LAST:event_canvasComponentResized
-
 
     /**
      * @param args the command line arguments
@@ -724,4 +721,34 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private javax.swing.JTextField textField;
     private javax.swing.JPanel textPanel;
     // End of variables declaration//GEN-END:variables
+
+    private void startServer(String port) {
+        int p;
+        if (port.isEmpty()) {
+            //default port
+            p = 39587;
+        } else {
+            try {
+                //set the custom port number;
+                p = Integer.valueOf(port);
+                if (p>65535 || p<0){
+                    //too high or low so use default port
+                    p=39587;
+                }
+            } catch (java.lang.NumberFormatException nfe) {
+                int num = JOptionPane.showConfirmDialog(this, "the port you entered was invalid, using default port 39587.");
+                if (num == JOptionPane.OK_OPTION) {
+                    //ok to use default port
+                    p = 39587;
+                } else {
+                    return;
+                }
+            }
+        }
+        
+        
+          System.out.println(p);
+//            Server server = new Server(p);
+//            server.listen();
+    }
 }
