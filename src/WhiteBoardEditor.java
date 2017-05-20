@@ -538,20 +538,17 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
             }
         }
-
         if(clickedWithinShape(p)){
             moving = true;
             return;
         }
         canvas.selectedShape = null; // unselect the shape if clicked on white area
         repaint(); // refresh canvas
-        
     }//GEN-LAST:event_canvasMousePressed
     
 
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
-        canvas.selectedShape = null;
         resizing = false;
         knobPoint = 0;
         origSize = null;
