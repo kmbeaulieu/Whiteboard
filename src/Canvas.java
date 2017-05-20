@@ -46,7 +46,6 @@ public class Canvas extends JPanel {
             DText t = new DText(dsm);
             list.add(t);
             selectedShape = t;
-            System.out.println(dsm.toString());
         }
 
     }

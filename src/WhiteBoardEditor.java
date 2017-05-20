@@ -173,9 +173,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         textField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textField.setText("Enter Text");
-        textField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textFieldActionPerformed(evt);
+        textField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textFieldKeyTyped(evt);
             }
         });
 
@@ -483,10 +483,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_colorChooserButtonMouseClicked
-
-    private void textFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_textFieldActionPerformed
     private boolean clickedWithinShape(Point p) {
         int shapeCount = canvas.list.size();
         for (int i = 0; i < shapeCount; i++) {
@@ -598,24 +594,20 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_canvasMouseDragged
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
-        // TODO add your handling code here:
-        canvas.remove();
+        canvas.remove();//take selected item away
     }//GEN-LAST:event_deleteButtonMouseClicked
 
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
-        // TODO add your handling code here:
         System.out.println("you clicked start client!");
 
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
-        // TODO add your handling code here:
         System.out.println("you clicked save!");
     }//GEN-LAST:event_saveFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        // TODO add your handling code here:
         System.out.println("you clicked open!");
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
@@ -643,7 +635,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_canvasComponentResized
 
     private void clearButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMousePressed
-        // TODO add your handling code here:
         canvas.clear();
         currentShapesTable.removeAll();
         shapeSpacing = 10;
@@ -652,9 +643,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_clearButtonMousePressed
 
     private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
-        // TODO add your handling code here:
         addShapeToCanvas("text");
     }//GEN-LAST:event_textButtonMousePressed
+
+    private void textFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyTyped
+        if(canvas.selectedShape instanceof DText){
+            DText dtxt = (DText) canvas.selectedShape;
+            dtxt.setText(textField.getText());
+            repaint();
+        }//if text is selected, update as you type into text box
+    }//GEN-LAST:event_textFieldKeyTyped
 
     /**
      * @param args the command line arguments
