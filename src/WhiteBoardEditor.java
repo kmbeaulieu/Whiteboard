@@ -576,9 +576,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 canvas.selectedShape.setH(origSize.height + (startY - endY));
                 canvas.selectedShape.setW(origSize.width + (startX - endX));
             }else if(knobPoint == 2){
-                canvas.selectedShape.setY(origSize.y - (startY - endY));
-                canvas.selectedShape.setH(origSize.height + (startY - endY));
-                canvas.selectedShape.setW(origSize.width - (startX - endX));
+                if(canvas.selectedShape instanceof DLine){
+                    canvas.selectedShape.setY(origSize.y + (startY - endY));
+                    canvas.selectedShape.setX(origSize.x + (startX - endX));
+                    canvas.selectedShape.setH(origSize.height - (startY - endY));
+                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                }else{
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setH(origSize.height + (startY - endY));
+                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                }
             }else if(knobPoint == 3){
                 canvas.selectedShape.setX(origSize.x - (startX - endX));
                 canvas.selectedShape.setH(origSize.height - (startY - endY));
@@ -593,8 +600,15 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             return;
         }
         if(moving && canvas.selectedShape != null){
-            canvas.selectedShape.setX(origSize.x - (startX - endX));
-            canvas.selectedShape.setY(origSize.y - (startY - endY));
+            if(canvas.selectedShape instanceof DLine){
+                canvas.selectedShape.setX(origSize.x - (startX - endX));
+                canvas.selectedShape.setY(origSize.y - (startY - endY));
+                canvas.selectedShape.setW(origSize.width - (startX - endX));
+                canvas.selectedShape.setH(origSize.height - (startY - endY));
+            }else{
+                canvas.selectedShape.setX(origSize.x - (startX - endX));
+                canvas.selectedShape.setY(origSize.y - (startY - endY));
+            }
             repaint();
         }
     }//GEN-LAST:event_canvasMouseDragged
