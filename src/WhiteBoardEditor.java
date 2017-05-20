@@ -548,34 +548,39 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int h = Math.abs(startY - endY);
         // if shape is currently selected
         if (resizing) {
+            int tx = 0, ty = 0, tw = 0, th = 0;
             switch (knobPoint) {
                 case 1:
                     if (canvas.selectedShape instanceof DLine) {
                         canvas.selectedShape.setY(origSize.y - (startY - endY));
                         canvas.selectedShape.setX(origSize.x - (startX - endX));
                     } else {
-                        canvas.selectedShape.setY(origSize.y - (startY - endY));
-                        canvas.selectedShape.setX(origSize.x - (startX - endX));
-                        canvas.selectedShape.setH(origSize.height + (startY - endY));
-                        canvas.selectedShape.setW(origSize.width + (startX - endX));
+                        tx = origSize.x - (startX - endX);
+                        ty = origSize.y - (startY - endY);
+                        tw = origSize.width + (startX - endX);
+                        th = origSize.height + (startY - endY);
+                        resizeShape(tx, ty, tw, th, 1);
                     }   break;
                 case 2:
                     if (canvas.selectedShape instanceof DLine) {
                         canvas.selectedShape.setH(origSize.height - (startY - endY));
                         canvas.selectedShape.setW(origSize.width - (startX - endX));
                     } else {
-                        canvas.selectedShape.setY(origSize.y - (startY - endY));
-                        canvas.selectedShape.setH(origSize.height + (startY - endY));
-                        canvas.selectedShape.setW(origSize.width - (startX - endX));
+                        ty = origSize.y - (startY - endY);
+                        tw = origSize.width - (startX - endX);
+                        th = origSize.height + (startY - endY);
+                        resizeShape(origSize.x, ty, tw, th, 2);
                     }   break;
                 case 3:
-                    canvas.selectedShape.setX(origSize.x - (startX - endX));
-                    canvas.selectedShape.setH(origSize.height - (startY - endY));
-                    canvas.selectedShape.setW(origSize.width + (startX - endX));
+                    tx = origSize.x - (startX - endX);
+                    tw = origSize.width + (startX - endX);
+                    th = origSize.height - (startY - endY);
+                    resizeShape(tx, origSize.y, tw, th, 3);
                     break;
                 case 4:
-                    canvas.selectedShape.setH(origSize.height - (startY - endY));
-                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                    th = origSize.height - (startY - endY);
+                    tw = origSize.width - (startX - endX);
+                    resizeShape(origSize.x, origSize.y, tw, th, 4);
                     break;
                 default:
                     break;
@@ -596,6 +601,45 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             repaint();
         }
     }//GEN-LAST:event_canvasMouseDragged
+    private void resizeShape(int x, int y, int w, int h, int p){
+        if(w < 0 && h < 0){
+            if(p == 1){
+                x = origSize.x + origSize.width;
+                y = origSize.y + origSize.height;
+            }else if(p == 2){
+                x = origSize.x - Math.abs(w);
+                y = origSize.y + origSize.height;
+            }else if(p == 3){
+                x = origSize.x + origSize.width;
+                y = origSize.y - Math.abs(h);
+            }else if(p == 4){
+                x = origSize.x - Math.abs(w);
+                y = origSize.y - Math.abs(h);
+            }
+        }else if(w < 0){
+            if(p == 1 || p== 3){
+                x = origSize.x + origSize.width;
+            }else if(p == 2 || p == 4){
+                x = origSize.x - Math.abs(w);
+            }
+        }else if(h < 0){
+            if(p == 1 || p == 2){
+                y = origSize.y + origSize.height;
+            }else if (p == 3 || p == 4){
+                y = origSize.y - Math.abs(h);
+            }            
+        }         
+        w = Math.abs(w);
+        h = Math.abs(h);
+        canvas.selectedShape.setX(x);
+        canvas.selectedShape.setY(y);
+        canvas.selectedShape.setW(w);
+        canvas.selectedShape.setH(h);
+    }
+    private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_addOvalButtonActionPerformed
 
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         // TODO add your handling code here:
