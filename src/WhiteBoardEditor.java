@@ -372,6 +372,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                 canvasMouseDragged(evt);
             }
         });
+        canvas.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                canvasMouseWheelMoved(evt);
+            }
+        });
         canvas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 canvasMousePressed(evt);
@@ -549,7 +554,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         int h = Math.abs(startY - endY);
         // if shape is currently selected
         if (resizing) {
-            int tx = 0, ty = 0, tw = 0, th = 0;
+            int tx, ty, tw, th;
             switch (knobPoint) {
                 case 1:
                     if (canvas.selectedShape instanceof DLine) {
@@ -637,11 +642,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         canvas.selectedShape.setW(w);
         canvas.selectedShape.setH(h);
     }
-    private void addOvalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addOvalButtonActionPerformed
-        // TODO add your handling code here:
-
-    }//GEN-LAST:event_addOvalButtonActionPerformed
-
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         canvas.remove();//take selected item away
     }//GEN-LAST:event_deleteButtonMouseClicked
@@ -711,6 +711,21 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             repaint();
         }
     }//GEN-LAST:event_fontChooserItemStateChanged
+    private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
+       int notches = evt.getWheelRotation();
+       if(canvas.selectedShape != null){
+           DShape cShape = canvas.selectedShape; // current selected shape
+           origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+           if (notches < 0) {
+               resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
+               repaint();
+           } else {
+               resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
+               repaint();
+           }
+       }
+       
+    }//GEN-LAST:event_canvasMouseWheelMoved
 
     /**
      * @param args the command line arguments
