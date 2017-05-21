@@ -87,4 +87,7 @@ public abstract class DShape implements ModelListener {
         //repaint
         c.repaint();
     }
+        public DShapeModel getModel(){
+            return model;
+        }
 }

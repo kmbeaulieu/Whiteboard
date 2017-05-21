@@ -1,6 +1,7 @@
 package DShape;
 
 import DShapeModel.*;
+import com.sun.javafx.tk.FontMetrics;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -15,6 +16,8 @@ public class DText extends DShape {
 
     }
 
+    
+     
     @Override
     public void draw(Graphics g) {
         g.setColor(model.getColor());
@@ -84,4 +87,5 @@ public class DText extends DShape {
         bot.y = bot.y + getH();
         return bot;
     }
+
 }
