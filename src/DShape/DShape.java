@@ -2,28 +2,28 @@ package DShape;
 
 import DShapeModel.DLineModel;
 import java.awt.Graphics;
-
 import DShapeModel.DShapeModel;
+import DShapeModel.ModelListener;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 
-public class DShape {
+//abstract so you cannot instantiate a basic DShape, it must be a subclass.
+public abstract class DShape implements ModelListener {
 
 	DShapeModel model;
+        Canvas c;
 	
 	public DShape(DShapeModel dsm){
 		model = dsm;
-                model.addListener(dsm);
 	}
 
         public void setColor(Color c){
             model.setColor(c);
         }
         
-	public void draw(Graphics g) {
-            g.setColor(model.getColor());
-	}
+	public abstract void draw(Graphics g);
         
         public Rectangle getBounds(){
             return model.getBounds();
@@ -67,4 +67,24 @@ public class DShape {
         public int getY(){
            return model.getY();
         }
+
+        public Canvas getCanvas(){
+            return c;
+        }
+        public void setCanvas(Canvas c){
+            this.c=c;
+        }
+    public void addListener(ModelListener listener) {
+        model.addListener(listener);
+    }
+
+    public void removeListener(ModelListener listener) {
+        model.removeListener(listener);
+    }
+
+    @Override
+    public void modelChanged(DShapeModel model) {
+        //repaint
+        c.repaint();
+    }
 }

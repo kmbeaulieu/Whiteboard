@@ -8,10 +8,10 @@ public class DOval extends DShape {
     public DOval(DShapeModel dsm) {
         super(dsm);
     }
+
     @Override
-	public void draw(Graphics g){
-		super.draw(g);
-		//do custom oval stuff here
-                g.fillOval(model.getX(), model.getY(), model.getW(), model.getH());
-	}
+    public void draw(Graphics g) {
+        g.setColor(model.getColor());
+        g.fillOval(model.getX(), model.getY(), model.getW(), model.getH());
+    }
 }
