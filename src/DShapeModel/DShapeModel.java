@@ -138,4 +138,8 @@ public class DShapeModel{
     public String toString() {
         return "DShapeModel{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", color=" + color + ", listeners=" + listeners + '}';
     }
+
+    public void removeAllListeners() {
+        listeners.clear();
+    }
 }
