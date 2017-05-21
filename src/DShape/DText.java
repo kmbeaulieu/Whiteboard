@@ -7,13 +7,12 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.font.LineMetrics;
 
 public class DText extends DShape {
 
     public DText(DShapeModel dsm) {
         super(dsm);
-       
+
     }
 
 	    @Override
@@ -51,14 +50,35 @@ public class DText extends DShape {
 		         g.setClip(clip);
 		}
         
-        public void setText(String text){
+	    public void setText(String text) {
+	        DTextModel dtm = (DTextModel) model;
+	        dtm.setText(text);
+	    }
+
+	    public void setFont(Font f) {
+	        DTextModel dtm = (DTextModel) model;
+	        dtm.setFont(f);
+	    }
+
+	    public String getText() {
+	        DTextModel dtm = (DTextModel) model;
+	        return dtm.getText();
+	    }
+
+	    public Font getFont() {
+	        DTextModel dtm = (DTextModel) model;
+	        return dtm.getFont();
+	    }
+	    
+	    public String getFontName(){
+	        DTextModel dtm = (DTextModel) model;
+	        return dtm.getFont().getName();
+	    }
+	        
+        @Override
+        public String toString() {
             DTextModel dtm = (DTextModel) model;
-            dtm.setText(text);
-        }
-        
-        public void setFont(Font f){
-            DTextModel dtm = (DTextModel) model;
-            dtm.setFont(f);
+            return "DText{" + dtm.toString() + '}';
         }
         
         public Point pointAtBottom(Font font, Graphics g, DTextModel dtm)
@@ -67,11 +87,4 @@ public class DText extends DShape {
         	bot.y = bot.y + getH();
 			return bot;
 		}
-
-    @Override
-    public String toString() {
-        DTextModel dtm = (DTextModel) model;
-        return "DText{" + dtm.toString() +  '}';
-    }
-        
 }

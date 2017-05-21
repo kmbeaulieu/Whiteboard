@@ -468,7 +468,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         } else if (shapeType.equals("line")) {
             canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
         } else if (shapeType.equals("text")) {
-            canvas.addShape(new DTextModel(nextFreeX,nextFreeY,nextFreeX+defaultSize,nextFreeY+defaultSize,Color.GRAY, textField.getText(),fontChooser.getSelectedItem()));
+            canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem()));
         } else {
             //nothing
         }
@@ -509,33 +509,46 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         return false;
     }
     private void canvasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMousePressed
-       // start a drag
+        // start a drag
         startX = evt.getX();
         startY = evt.getY();
         Point p = new Point(evt.getX(), evt.getY());
-        
+
         DShape cShape = canvas.selectedShape; // current selected shape
+        if (cShape instanceof DText) {//if whatever you are selecting IS text
+            DText dtxt = (DText) cShape;
+            //update the textbox and font chooser to match what is selected
+
+            textField.setText(dtxt.getText());
+            fontChooser.select(dtxt.getFontName());
+        } else if (cShape != null) {
+            //if it is another shape, disable text info
+            disableTextBoxItems();
+        } else {//if nothing selected, enable
+            resetTextBoxItems();
+        }
         // if dragging within the knobs resize shape
-        if(cShape != null){
+        if (cShape != null) {
             knobPoint = cShape.getKnobs().getKnobPoint(p);
-            if(knobPoint != 0){
+            if (knobPoint != 0) {
                 resizing = true;
                 origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
                 return;
 
-            }else{ // move shape
+            } else { // move shape
                 moving = true;
                 origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
             }
         }
-        if(clickedWithinShape(p)){
+        if (clickedWithinShape(p)) {
+
             moving = true;
             return;
         }
         canvas.selectedShape = null; // unselect the shape if clicked on white area
+        resetTextBoxItems();
         repaint(); // refresh canvas
     }//GEN-LAST:event_canvasMousePressed
-    
 
 
     private void canvasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseReleased
@@ -566,7 +579,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                         tw = origSize.width + (startX - endX);
                         th = origSize.height + (startY - endY);
                         resizeShape(tx, ty, tw, th, 1);
-                    }   break;
+                    }
+                    break;
                 case 2:
                     if (canvas.selectedShape instanceof DLine) {
                         canvas.selectedShape.setH(origSize.height - (startY - endY));
@@ -576,7 +590,8 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
                         tw = origSize.width - (startX - endX);
                         th = origSize.height + (startY - endY);
                         resizeShape(origSize.x, ty, tw, th, 2);
-                    }   break;
+                    }
+                    break;
                 case 3:
                     tx = origSize.x - (startX - endX);
                     tw = origSize.width + (startX - endX);
@@ -607,34 +622,34 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             repaint();
         }
     }//GEN-LAST:event_canvasMouseDragged
-    private void resizeShape(int x, int y, int w, int h, int p){
-        if(w < 0 && h < 0){
-            if(p == 1){
+    private void resizeShape(int x, int y, int w, int h, int p) {
+        if (w < 0 && h < 0) {
+            if (p == 1) {
                 x = origSize.x + origSize.width;
                 y = origSize.y + origSize.height;
-            }else if(p == 2){
+            } else if (p == 2) {
                 x = origSize.x - Math.abs(w);
                 y = origSize.y + origSize.height;
-            }else if(p == 3){
+            } else if (p == 3) {
                 x = origSize.x + origSize.width;
                 y = origSize.y - Math.abs(h);
-            }else if(p == 4){
+            } else if (p == 4) {
                 x = origSize.x - Math.abs(w);
                 y = origSize.y - Math.abs(h);
             }
-        }else if(w < 0){
-            if(p == 1 || p== 3){
+        } else if (w < 0) {
+            if (p == 1 || p == 3) {
                 x = origSize.x + origSize.width;
-            }else if(p == 2 || p == 4){
+            } else if (p == 2 || p == 4) {
                 x = origSize.x - Math.abs(w);
             }
-        }else if(h < 0){
-            if(p == 1 || p == 2){
+        } else if (h < 0) {
+            if (p == 1 || p == 2) {
                 y = origSize.y + origSize.height;
-            }else if (p == 3 || p == 4){
+            } else if (p == 3 || p == 4) {
                 y = origSize.y - Math.abs(h);
-            }            
-        }         
+            }
+        }
         w = Math.abs(w);
         h = Math.abs(h);
         canvas.selectedShape.setX(x);
@@ -644,6 +659,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         canvas.remove();//take selected item away
+        
     }//GEN-LAST:event_deleteButtonMouseClicked
 
 
@@ -667,14 +683,17 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private void addRectangleButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMousePressed
         addShapeToCanvas("rectangle");
+        disableTextBoxItems();
     }//GEN-LAST:event_addRectangleButtonMousePressed
 
     private void addOvalButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addOvalButtonMousePressed
         addShapeToCanvas("oval");
+        disableTextBoxItems();
     }//GEN-LAST:event_addOvalButtonMousePressed
 
     private void addLineButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addLineButtonMousePressed
         addShapeToCanvas("line");
+        disableTextBoxItems();
     }//GEN-LAST:event_addLineButtonMousePressed
 
     private void canvasComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_canvasComponentResized
@@ -689,6 +708,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         shapeSpacing = 10;
         nextFreeX = shapeSpacing;
         nextFreeY = shapeSpacing;
+        resetTextBoxItems();
     }//GEN-LAST:event_clearButtonMousePressed
 
     private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
@@ -696,7 +716,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_textButtonMousePressed
 
     private void textFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyTyped
-        if(canvas.selectedShape instanceof DText){
+        if (canvas.selectedShape instanceof DText) {
             DText dtxt = (DText) canvas.selectedShape;
             dtxt.setText(textField.getText());
             repaint();
@@ -705,26 +725,26 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
     private void fontChooserItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fontChooserItemStateChanged
         // if a text obj selected, update the font when changed!
-        if(canvas.selectedShape instanceof DText){
+        if (canvas.selectedShape instanceof DText) {
             DText dtxt = (DText) canvas.selectedShape;
             dtxt.setFont(Font.decode(fontChooser.getSelectedItem()));
             repaint();
         }
     }//GEN-LAST:event_fontChooserItemStateChanged
     private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
-       int notches = evt.getWheelRotation();
-       if(canvas.selectedShape != null){
-           DShape cShape = canvas.selectedShape; // current selected shape
-           origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
-           if (notches < 0) {
-               resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
-               repaint();
-           } else {
-               resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
-               repaint();
-           }
-       }
-       
+        int notches = evt.getWheelRotation();
+        if (canvas.selectedShape != null) {
+            DShape cShape = canvas.selectedShape; // current selected shape
+            origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+            if (notches < 0) {
+                resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
+                repaint();
+            } else {
+                resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
+                repaint();
+            }
+        }
+
     }//GEN-LAST:event_canvasMouseWheelMoved
 
     /**
@@ -823,5 +843,16 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         System.out.println(p);
 //            Server server = new Server(p);
 //            server.listen();
+    }
+
+    private void disableTextBoxItems(){
+        fontChooser.setEnabled(false);
+        textField.setEnabled(false);
+    }
+    private void resetTextBoxItems() {
+        textField.setText("Enter Text");
+        textField.setEnabled(true);
+        fontChooser.select(0);
+        fontChooser.setEnabled(true);
     }
 }
