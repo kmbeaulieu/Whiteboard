@@ -8,14 +8,10 @@ package DShapeModel;
 public interface ModelListener {
 	
 	/**
-	 * This shows that something changed. Not detailed what changed though;
+	 * This shows that something changed. Not detailed what changed though
 	 * 
-	 * @param model pointer to the model that changed
+	 * @param model the model that changed
 	 */
 	public void modelChanged(DShapeModel model);
-        
-        public void addListener(DShapeModel model);
-        
-        public void removeListener(DShapeModel model);
 
 }

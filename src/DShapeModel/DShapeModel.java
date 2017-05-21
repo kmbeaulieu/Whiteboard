@@ -6,7 +6,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DShapeModel implements ModelListener {
+public class DShapeModel{
 
     private int x;
     private int y;
@@ -14,15 +14,6 @@ public class DShapeModel implements ModelListener {
     private int h;
     private Color color;
     private List<ModelListener> listeners = new ArrayList<>();
-
-    /**
-     * Add a listener to the model
-     *
-     * @param l listener to add
-     */
-    public void addListener(ModelListener l) {
-        listeners.add(l);
-    }
 
     /**
      * Default shape model constructor.
@@ -58,11 +49,12 @@ public class DShapeModel implements ModelListener {
 
     /**
      * set the new x and let the listeners know the shape changed
+     *
      * @param x new x position
      */
     public void setX(int x) {
         this.x = x;
-        listeners.forEach(l -> l.modelChanged(this));
+        notifyModelChanged();
     }
 
     public int getY() {
@@ -71,11 +63,12 @@ public class DShapeModel implements ModelListener {
 
     /**
      * set the new y position and let the listeners know the shape changed
+     *
      * @param y new y position
      */
     public void setY(int y) {
         this.y = y;
-        listeners.forEach(l -> l.modelChanged(this));
+        notifyModelChanged();
     }
 
     public int getW() {
@@ -84,11 +77,12 @@ public class DShapeModel implements ModelListener {
 
     /**
      * set the new width and let the listeners know the shape changed
+     *
      * @param w new width
      */
     public void setW(int w) {
         this.w = w;
-        listeners.forEach(l -> l.modelChanged(this));
+        notifyModelChanged();
     }
 
     public int getH() {
@@ -97,11 +91,12 @@ public class DShapeModel implements ModelListener {
 
     /**
      * set the new height and let the listeners know the shape changed
+     *
      * @param h new height
      */
     public void setH(int h) {
         this.h = h;
-        listeners.forEach(l -> l.modelChanged(this));
+        notifyModelChanged();
     }
 
     public Color getColor() {
@@ -110,11 +105,12 @@ public class DShapeModel implements ModelListener {
 
     /**
      * set the color for the shape and let the listeners know the shape changed
-     * @param c new color 
+     *
+     * @param c new color
      */
     public void setColor(Color c) {
         this.color = c;
-        listeners.forEach(l -> l.modelChanged(this));
+        notifyModelChanged();
     }
 
     public Rectangle getBounds() {
@@ -126,26 +122,20 @@ public class DShapeModel implements ModelListener {
         return new Point((int) bounds.getCenterX(), (int) bounds.getCenterY());
     }
 
-    @Override
-    public void modelChanged(DShapeModel model) {
-        
+    public void addListener(ModelListener listener) {
+        listeners.add(listener);
     }
 
-    @Override
-    public void addListener(DShapeModel model) {
-        listeners.add(model);
+    public void removeListener(ModelListener listener) {
+        listeners.remove(listener);
     }
 
-    @Override
-    public void removeListener(DShapeModel model) {
-        listeners.remove(model);
+    public void notifyModelChanged() {
+        listeners.forEach(l -> l.modelChanged(this));
     }
 
     @Override
     public String toString() {
         return "DShapeModel{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", color=" + color + ", listeners=" + listeners + '}';
     }
-    
-    
-
 }

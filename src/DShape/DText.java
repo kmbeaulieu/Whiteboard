@@ -3,7 +3,11 @@ package DShape;
 import DShapeModel.*;
 import com.sun.javafx.tk.FontMetrics;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Shape;
 
 public class DText extends DShape {
 
@@ -16,11 +20,35 @@ public class DText extends DShape {
      
     @Override
     public void draw(Graphics g) {
-        super.draw(g);
+        g.setColor(model.getColor());
         DTextModel dtm = (DTextModel) model;
-        g.setFont(dtm.getFont());
+        Rectangle bounds = dtm.getBounds();
+        Font font = dtm.getFont();
+        font.deriveFont(1.0f);
+        float size = 1;
+        boolean isSmallerThanBounds = true;
+        while (isSmallerThanBounds) {
+            size = (size * 1.1f) + 1;
+            Font increasingFont = font.deriveFont(size);
+            FontMetrics fm = g.getFontMetrics(font);
+            Rectangle fontBounds = fm.getStringBounds(dtm.getText(), g).getBounds();
+            if ((fontBounds.getHeight() > bounds.getHeight()) || (fontBounds.getWidth()) > bounds.getWidth()) {
+                isSmallerThanBounds = false;
+            }
+            font = increasingFont;
+        }
+        g.setFont(font);
+
+        Point bottom = pointAtBottom(font, g, dtm);
+        Point pos = new Point(bottom.x + dtm.getX(), bottom.y + dtm.getY());
+
+        Shape clip = g.getClip();
+        g.setClip(bounds);
+
         g.setColor(dtm.getColor());
-        g.drawString(dtm.getText(), dtm.getX(), dtm.getY());
+        g.drawString(dtm.getText(), pos.x, pos.y);
+
+        g.setClip(clip);
     }
 
     public void setText(String text) {
@@ -42,8 +70,8 @@ public class DText extends DShape {
         DTextModel dtm = (DTextModel) model;
         return dtm.getFont();
     }
-    
-    public String getFontName(){
+
+    public String getFontName() {
         DTextModel dtm = (DTextModel) model;
         return dtm.getFont().getName();
     }
@@ -54,5 +82,10 @@ public class DText extends DShape {
         return "DText{" + dtm.toString() + '}';
     }
 
-   
+    public Point pointAtBottom(Font font, Graphics g, DTextModel dtm) {
+        Point bot = new Point();
+        bot.y = bot.y + getH();
+        return bot;
+    }
+
 }

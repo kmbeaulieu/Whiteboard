@@ -1,17 +1,13 @@
 
 import DShape.*;
 import DShapeModel.*;
-import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import javax.swing.JColorChooser;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -82,9 +78,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
         box = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
         createShapeLabel = new javax.swing.JLabel();
@@ -113,12 +106,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         startServerMenuItem = new javax.swing.JMenuItem();
         startClientMenuItem = new javax.swing.JMenuItem();
-
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
-
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -432,16 +419,23 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void addShapeToCanvas(String shapeType) {
-        if (shapeType.equals("rectangle")) {
-            canvas.addShape(new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
-        } else if (shapeType.equals("oval")) {
-            canvas.addShape(new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
-        } else if (shapeType.equals("line")) {
-            canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
-        } else if (shapeType.equals("text")) {
-            canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, "Hello", "Dialog"));
-        } else {
-            //nothing
+        switch (shapeType) {
+            case "rectangle":
+                canvas.addShape(new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+                break;
+            case "oval":
+                canvas.addShape(new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+                break;
+            case "line":
+                canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
+                break;
+            case "text":
+                canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem()));
+                break;
+        //nothing
+            default:
+                break;
+
         }
         canvas.repaint();
         nextFreeX += defaultSize + shapeSpacing;
@@ -454,7 +448,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         }
     }
     private void colorChooserButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_colorChooserButtonMouseClicked
-        // TODO add your handling code here:
         currentColor = JColorChooser.showDialog(rootPane, "Pick a color", currentColor);
         if (currentColor != null) {
             currentColorPreviewPanel.setBackground(currentColor);
@@ -484,12 +477,10 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         startX = evt.getX();
         startY = evt.getY();
         Point p = new Point(evt.getX(), evt.getY());
-
         DShape cShape = canvas.selectedShape; // current selected shape
         if (cShape instanceof DText) {//if whatever you are selecting IS text
             DText dtxt = (DText) cShape;
             //update the textbox and font chooser to match what is selected
-
             textField.setText(dtxt.getText());
             fontChooser.select(dtxt.getFontName());
              repaint(); // refresh canvas
@@ -533,10 +524,6 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void canvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseDragged
         int endX = evt.getX();
         int endY = evt.getY();
-        int sY = Math.min(startY, endY);
-        int sX = Math.min(startX, endX);
-        int w = Math.abs(startX - endX);
-        int h = Math.abs(startY - endY);
         // if shape is currently selected
         if (resizing) {
             int tx, ty, tw, th;
@@ -631,13 +618,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         canvas.remove();//take selected item away
-        
     }//GEN-LAST:event_deleteButtonMouseClicked
 
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
         System.out.println("you clicked start client!");
-
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
@@ -771,10 +756,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private javax.swing.JButton deleteButton;
     private java.awt.Choice fontChooser;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem openFileMenuItem;
@@ -817,10 +799,11 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 //            server.listen();
     }
 
-    private void disableTextBoxItems(){
+    private void disableTextBoxItems() {
         fontChooser.setEnabled(false);
         textField.setEnabled(false);
     }
+
     private void resetTextBoxItems() {
         textField.setText("Enter Text");
         textField.setEnabled(true);
