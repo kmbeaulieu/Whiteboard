@@ -1,7 +1,6 @@
 package DShape;
 
 import DShapeModel.*;
-import com.sun.javafx.tk.FontMetrics;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;

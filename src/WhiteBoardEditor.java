@@ -35,6 +35,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private boolean moving = false;
     private int knobPoint = 0;
     private Rectangle origSize = null;
+    private ShapeTableModel shapeTableModel;
 
     private void addToTable(DRectModel r) {
         //TODO
@@ -67,6 +68,9 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
      */
     public WhiteBoardEditor() {
         initComponents();
+        shapeTableModel = new ShapeTableModel(canvas);
+        currentShapesTable.setModel(shapeTableModel);
+
     }
 
     /**
@@ -238,7 +242,15 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         currentShapesLabel.setText("Current Shapes");
 
         currentShapesTable.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        currentShapesTable.setModel(new ShapeTableModel());
+        currentShapesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        currentShapesTable.getTableHeader().setReorderingAllowed(false);
         tableScrollPane.setViewportView(currentShapesTable);
 
         colorPickerPanel.setLayout(new java.awt.BorderLayout());
@@ -421,22 +433,36 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     private void addShapeToCanvas(String shapeType) {
         switch (shapeType) {
             case "rectangle":
-                canvas.addShape(new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+                DRectModel rm = new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY);
+                canvas.addShape(rm);
+                rm.addListener(shapeTableModel);
+                shapeTableModel.addRow(rm);
                 break;
             case "oval":
-                canvas.addShape(new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY));
+                DOvalModel om = new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY);
+                canvas.addShape(om);
+                om.addListener(shapeTableModel);
+                shapeTableModel.addRow(om);
+
                 break;
             case "line":
-                canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
+                DLineModel lm = new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY);
+                canvas.addShape(lm);
+                lm.addListener(shapeTableModel);
+                shapeTableModel.addRow(lm);
                 break;
             case "text":
-                canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem()));
+                DTextModel tm = new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem());
+                canvas.addShape(tm);
+                tm.addListener(shapeTableModel);
+                shapeTableModel.addRow(tm);
                 break;
-        //nothing
+            //nothing
             default:
                 break;
 
         }
+
         canvas.repaint();
         nextFreeX += defaultSize + shapeSpacing;
         if (nextFreeX > xBound - defaultSize) {
@@ -483,7 +509,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             //update the textbox and font chooser to match what is selected
             textField.setText(dtxt.getText());
             fontChooser.select(dtxt.getFontName());
-             repaint(); // refresh canvas
+            repaint(); // refresh canvas
         } else if (cShape != null) {
             //if it is another shape, disable text info
             disableTextBoxItems();
@@ -617,7 +643,10 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         canvas.selectedShape.setH(h);
     }
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
-        canvas.remove();//take selected item away
+        if (canvas.selectedShape != null) {
+            shapeTableModel.removeRow(canvas.selectedShape.getModel());
+            canvas.remove();//take selected item away
+        }
     }//GEN-LAST:event_deleteButtonMouseClicked
 
 
@@ -660,8 +689,13 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_canvasComponentResized
 
     private void clearButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMousePressed
+        //remove from table
+        shapeTableModel.clearRows();
+        //delete related listeners for the shape
+        canvas.list.forEach(shape -> shape.removeAllListeners());
+        //get rid of it on the canvas
         canvas.clear();
-        currentShapesTable.removeAll();
+        //reset other values
         shapeSpacing = 10;
         nextFreeX = shapeSpacing;
         nextFreeY = shapeSpacing;

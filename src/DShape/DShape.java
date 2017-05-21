@@ -90,4 +90,10 @@ public abstract class DShape implements ModelListener {
         public DShapeModel getModel(){
             return model;
         }
+
+    public void removeAllListeners() {
+        model.removeAllListeners();
+    }
+
+ 
 }
