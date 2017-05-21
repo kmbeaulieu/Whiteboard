@@ -173,6 +173,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
         textField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textField.setText("Enter Text");
+        textField.setNextFocusableComponent(fontChooser);
         textField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 textFieldKeyTyped(evt);
@@ -250,37 +251,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         currentShapesLabel.setText("Current Shapes");
 
         currentShapesTable.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        currentShapesTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "X", "Y", "Width", "Height"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        currentShapesTable.setModel(new ShapeTableModel());
         tableScrollPane.setViewportView(currentShapesTable);
 
         colorPickerPanel.setLayout(new java.awt.BorderLayout());
@@ -468,7 +439,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
         } else if (shapeType.equals("line")) {
             canvas.addShape(new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY));
         } else if (shapeType.equals("text")) {
-            canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem()));
+            canvas.addShape(new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, "Hello", "Dialog"));
         } else {
             //nothing
         }
@@ -521,6 +492,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
 
             textField.setText(dtxt.getText());
             fontChooser.select(dtxt.getFontName());
+             repaint(); // refresh canvas
         } else if (cShape != null) {
             //if it is another shape, disable text info
             disableTextBoxItems();
@@ -546,7 +518,7 @@ public class WhiteBoardEditor extends javax.swing.JFrame {
             return;
         }
         canvas.selectedShape = null; // unselect the shape if clicked on white area
-        resetTextBoxItems();
+        resetTextBoxItems(); //nothing selected so allow users to input text for a new text shape
         repaint(); // refresh canvas
     }//GEN-LAST:event_canvasMousePressed
 

@@ -1,6 +1,7 @@
 package DShape;
 
 import DShapeModel.*;
+import com.sun.javafx.tk.FontMetrics;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -11,6 +12,8 @@ public class DText extends DShape {
 
     }
 
+    
+     
     @Override
     public void draw(Graphics g) {
         super.draw(g);
@@ -51,4 +54,5 @@ public class DText extends DShape {
         return "DText{" + dtm.toString() + '}';
     }
 
+   
 }

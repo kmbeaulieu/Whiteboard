@@ -67,4 +67,7 @@ public class DShape {
         public int getY(){
            return model.getY();
         }
+        public DShapeModel getModel(){
+            return model;
+        }
 }
