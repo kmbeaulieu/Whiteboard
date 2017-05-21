@@ -4,10 +4,20 @@ import DShapeModel.*;
 import javax.swing.JPanel;
 
 import DShapeModel.DShapeModel;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
 
 /*
  * JPanel should be 400x400. It contains the shapes
@@ -15,6 +25,7 @@ import java.util.ArrayList;
  */
 public class Canvas extends JPanel {
 
+    //first in line is the furthest in back. Uses painter's alogrithm - draw further back first (index 0)
     public ArrayList<DShape> list = new ArrayList();
     public DShape selectedShape = null;
     /**
@@ -28,23 +39,32 @@ public class Canvas extends JPanel {
      *
      * @param dsm the dshapemodel to add to the canvas
      */
-    public void addShape(DShapeModel dsm) {
+    public void addShape(DShapeModel dsm, ShapeTableModel stm) {
         // this might return something in the future?
         if (dsm instanceof DRectModel) {
             DRect r = new DRect(dsm);
             list.add(r);
+            //do listener stuff
+            stm.addRow(dsm);
+            r.addListener(stm);
             selectedShape = r;
         } else if (dsm instanceof DOvalModel) {
             DOval o = new DOval(dsm);
             list.add(o);
+            stm.addRow(dsm);
+            o.addListener(stm);
             selectedShape = o;
         } else if (dsm instanceof DLineModel) {
             DLine l = new DLine(dsm);
             list.add(l);
+            stm.addRow(dsm);
+            l.addListener(stm);
             selectedShape = l;
         } else if (dsm instanceof DTextModel) {
             DText t = new DText(dsm);
             list.add(t);
+            stm.addRow(dsm);
+            t.addListener(stm);
             selectedShape = t;
         }
 
@@ -56,19 +76,22 @@ public class Canvas extends JPanel {
 
     /**
      * Remove the currently selected shape. If nothing is selected, do nothing.
+     * @param stm table model to update its listener
      */
-    public void remove() {
+    public void remove(ShapeTableModel stm) {
         if (selectedShape != null) {
+            stm.removeRow(selectedShape.getModel());
             list.remove(selectedShape);
             selectedShape = null;
             repaint();
         }
     }
 
-    public void clear() {
+    public void clear(ShapeTableModel stm) {
         list.clear();
-        selectedShape=null;
+        selectedShape = null;
         repaint();
+        stm.clearRows();
     }
 
     @Override
@@ -86,4 +109,47 @@ public class Canvas extends JPanel {
         });
     }
 
+    void loadFromFile(File f, ShapeTableModel stm) throws FileNotFoundException {
+        XMLDecoder in;
+        in = new XMLDecoder(new BufferedInputStream(new FileInputStream(f)));
+        DShapeModel[] models = (DShapeModel[]) in.readObject();
+        clear(stm);
+        for (DShapeModel m : models) {
+            addShape(m, stm);
+        }
+        repaint();
+        selectedShape = null;
+        in.close();
+
+    }
+
+    void saveCurrentCanvas(File f) throws FileNotFoundException {
+        selectedShape = null;
+        //no knobs please
+        XMLEncoder out;
+        out = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(f)));
+        DShapeModel[] models = new DShapeModel[list.size()];
+        for (int i = 0; i < models.length; i++) {
+            models[i] = list.get(i).getModel();
+        }
+        out.writeObject(models);
+        //clear and close up the mess
+        out.flush();
+        out.close();
+    }
+
+    void saveCurrentCanvasToImage(File f) throws IOException {
+        selectedShape = null;
+        repaint();
+        //dont save any knobs
+        //saving as what is currently the size of the canvas, if you want it bigger, resize the window before saving
+        BufferedImage img = new BufferedImage(this.getBounds().width, this.getBounds().height, BufferedImage.TYPE_INT_ARGB);
+        //needed so it is not just a black save file
+        paint(img.getGraphics());
+        ImageIO.write(img, "PNG", f);
+    }
+
+    public void clearSelectedShape() {
+        selectedShape = null;
+    }
 }

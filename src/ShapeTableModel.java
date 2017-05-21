@@ -1,4 +1,5 @@
 
+import DShape.DRect;
 import DShapeModel.DShapeModel;
 import DShapeModel.ModelListener;
 import java.util.ArrayList;
@@ -56,7 +57,6 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
             default:
                 break;
         }
-
         return null;
     }
 
@@ -65,7 +65,6 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
         for (int i = 0; i < c.list.size(); i++) {
             if (model == c.list.get(i).getModel()) {
                 fireTableRowsUpdated(i, i);
-
             }
         }
     }
@@ -91,6 +90,10 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
     public void clearRows() {
         rows.clear();
         fireTableDataChanged();
+    }
+
+    void addRow(DRect r) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

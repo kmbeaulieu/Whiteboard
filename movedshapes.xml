@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_101" class="java.beans.XMLDecoder">
+ <array class="DShapeModel.DShapeModel" length="3">
+  <void index="0">
+   <object class="DShapeModel.DOvalModel">
+    <void property="color">
+     <object class="java.awt.Color">
+      <int>255</int>
+      <int>51</int>
+      <int>51</int>
+      <int>255</int>
+     </object>
+    </void>
+    <void property="h">
+     <int>379</int>
+    </void>
+    <void property="w">
+     <int>118</int>
+    </void>
+    <void property="x">
+     <int>10</int>
+    </void>
+    <void property="y">
+     <int>10</int>
+    </void>
+   </object>
+  </void>
+  <void index="1">
+   <object class="DShapeModel.DRectModel">
+    <void property="h">
+     <int>60</int>
+    </void>
+    <void property="w">
+     <int>60</int>
+    </void>
+    <void property="x">
+     <int>80</int>
+    </void>
+    <void property="y">
+     <int>10</int>
+    </void>
+   </object>
+  </void>
+  <void index="2">
+   <object class="DShapeModel.DLineModel">
+    <void property="h">
+     <int>220</int>
+    </void>
+    <void property="w">
+     <int>164</int>
+    </void>
+    <void property="x">
+     <int>104</int>
+    </void>
+    <void property="y">
+     <int>160</int>
+    </void>
+   </object>
+  </void>
+ </array>
+</java>
