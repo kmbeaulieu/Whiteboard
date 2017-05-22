@@ -83,7 +83,7 @@ public class Whiteboard extends javax.swing.JFrame {
         addOvalButton = new javax.swing.JButton();
         addLineButton = new javax.swing.JButton();
         textField = new javax.swing.JTextField();
-        textButton = new javax.swing.JButton();
+        addTextButton = new javax.swing.JButton();
         fontChooser = new java.awt.Choice();
         currentShapesLabel = new javax.swing.JLabel();
         tableScrollPane = new javax.swing.JScrollPane();
@@ -198,17 +198,16 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         });
 
-        textButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        textButton.setText("Text");
-        textButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        addTextButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        addTextButton.setText("Text");
+        addTextButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                textButtonMousePressed(evt);
+                addTextButtonMousePressed(evt);
             }
         });
 
         fontChooser.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         fontChooser.setMinimumSize(new java.awt.Dimension(144, 21));
-        fontChooser.setPreferredSize(new java.awt.Dimension(144, 21));
         for (String font : fonts) {
             fontChooser.add(font);
         }
@@ -226,7 +225,7 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(shapePanel1Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addTextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -252,7 +251,7 @@ public class Whiteboard extends javax.swing.JFrame {
                         .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(fontChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addTextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(41, 41, 41))
         );
 
@@ -683,9 +682,14 @@ public class Whiteboard extends javax.swing.JFrame {
 
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
-        statusLabel.setText(CLIENT_STATUS);
-        ipLabel.setText(IP);
-        portLabel.setText("");
+        if (status.equals(NORMAL_STATUS)) {
+            status = CLIENT_STATUS;
+            statusLabel.setText(status);
+            ipLabel.setText(IP);
+            portLabel.setText("");
+            //disable the things a client cannot do
+            disableClientItems();
+        }
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
@@ -719,9 +723,13 @@ public class Whiteboard extends javax.swing.JFrame {
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void startServerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerMenuItemActionPerformed
-        String port = JOptionPane.showInputDialog(this, "Enter Port Number", "Server Setup", JOptionPane.QUESTION_MESSAGE);
-        startServer(port);
-        
+        if (status.equals(NORMAL_STATUS)) {
+            String port = JOptionPane.showInputDialog(this, "Enter Port Number", "Server Setup", JOptionPane.QUESTION_MESSAGE);
+            startServer(port);
+            startServerMenuItem.setEnabled(false);
+            startClientMenuItem.setEnabled(false);
+            openFileMenuItem.setEnabled(false);
+        }
     }//GEN-LAST:event_startServerMenuItemActionPerformed
 
     private void addRectangleButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMousePressed
@@ -808,9 +816,9 @@ public class Whiteboard extends javax.swing.JFrame {
         }//if text is selected, update as you type into text box
     }//GEN-LAST:event_textFieldKeyTyped
 
-    private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
+    private void addTextButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addTextButtonMousePressed
         addShapeToCanvas("text");
-    }//GEN-LAST:event_textButtonMousePressed
+    }//GEN-LAST:event_addTextButtonMousePressed
 
     /**
      * @param args the command line arguments
@@ -833,7 +841,7 @@ public class Whiteboard extends javax.swing.JFrame {
         }
         //</editor-fold>
         //</editor-fold>
-        
+
         //</editor-fold>
         //</editor-fold>
 
@@ -849,6 +857,7 @@ public class Whiteboard extends javax.swing.JFrame {
     private javax.swing.JButton addLineButton;
     private javax.swing.JButton addOvalButton;
     private javax.swing.JButton addRectangleButton;
+    private javax.swing.JButton addTextButton;
     private javax.swing.JPanel box;
     private Canvas canvas;
     private javax.swing.JButton clearButton;
@@ -877,7 +886,6 @@ public class Whiteboard extends javax.swing.JFrame {
     private javax.swing.JPanel statusPanel;
     private javax.swing.JLabel statusTextLabel;
     private javax.swing.JScrollPane tableScrollPane;
-    private javax.swing.JButton textButton;
     private javax.swing.JTextField textField;
     // End of variables declaration//GEN-END:variables
 
@@ -885,28 +893,28 @@ public class Whiteboard extends javax.swing.JFrame {
         int p;
         if (port.isEmpty()) {
             //default port
-            p = 39587;
+            p = DEFAULT_PORT;
         } else {
             try {
                 //set the custom port number;
                 p = Integer.valueOf(port);
                 if (p > 65535 || p < 0) {
                     //too high or low so use default port
-                    p = 39587;
+                    p = DEFAULT_PORT;
                 }
             } catch (java.lang.NumberFormatException nfe) {
                 int num = JOptionPane.showConfirmDialog(this, "the port you entered was invalid, using default port 39587.");
                 if (num == JOptionPane.OK_OPTION) {
                     //ok to use default port
-                    p = 39587;
+                    p = DEFAULT_PORT;
                 } else {
                     return;
                 }
             }
         }
-
-        statusLabel.setText(SERVER_STATUS);
-        portLabel.setText("port:"+p);
+        status = SERVER_STATUS;
+        statusLabel.setText(status);
+        portLabel.setText("port:" + p);
 //            Server server = new Server(p);
 //            server.listen();
     }
@@ -921,5 +929,20 @@ public class Whiteboard extends javax.swing.JFrame {
         textField.setEnabled(true);
         fontChooser.select(0);
         fontChooser.setEnabled(true);
+    }
+
+    private void disableClientItems() {
+        startServerMenuItem.setEnabled(false);
+        startClientMenuItem.setEnabled(false);
+        openFileMenuItem.setEnabled(false);
+        addLineButton.setEnabled(false);
+        addOvalButton.setEnabled(false);
+        addRectangleButton.setEnabled(false);
+        addTextButton.setEnabled(false);
+        textField.setEnabled(false);
+        fontChooser.setEnabled(false);
+        deleteButton.setEnabled(false);
+        clearButton.setEnabled(false);
+        colorChooserButton.setEnabled(false);
     }
 }
