@@ -15,6 +15,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.Collections;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -93,6 +94,8 @@ public class Whiteboard extends javax.swing.JFrame {
         deleteButton = new javax.swing.JButton();
         currentColorPreviewPanel = new javax.swing.JPanel();
         colorChooserButton = new javax.swing.JButton();
+        moveBack = new javax.swing.JButton();
+        moveFront = new javax.swing.JButton();
         canvas = new Canvas();
         jMenuBar2 = new javax.swing.JMenuBar();
         fileName = new javax.swing.JMenu();
@@ -114,7 +117,7 @@ public class Whiteboard extends javax.swing.JFrame {
         controlPanel.setBackground(new java.awt.Color(153, 255, 204));
         controlPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         controlPanel.setMinimumSize(new java.awt.Dimension(200, 400));
-        controlPanel.setPreferredSize(new java.awt.Dimension(300, 400));
+        controlPanel.setPreferredSize(new java.awt.Dimension(380, 400));
 
         statusPanel.setPreferredSize(new java.awt.Dimension(100, 100));
 
@@ -138,7 +141,7 @@ public class Whiteboard extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(portLabel))
                     .addComponent(statusLabel))
-                .addContainerGap(64, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         statusPanelLayout.setVerticalGroup(
             statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,7 +150,7 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusTextLabel)
                     .addComponent(statusLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ipLabel)
                     .addComponent(portLabel))
@@ -222,21 +225,21 @@ public class Whiteboard extends javax.swing.JFrame {
         shapePanel1Layout.setHorizontalGroup(
             shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shapePanel1Layout.createSequentialGroup()
-                .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(shapePanel1Layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addComponent(addTextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(shapePanel1Layout.createSequentialGroup()
                         .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(29, Short.MAX_VALUE))
+                        .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(shapePanel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(addTextButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                            .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         shapePanel1Layout.setVerticalGroup(
             shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,7 +311,7 @@ public class Whiteboard extends javax.swing.JFrame {
             .addGroup(currentColorPreviewPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(colorChooserButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(41, Short.MAX_VALUE))
         );
         currentColorPreviewPanelLayout.setVerticalGroup(
             currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -317,6 +320,22 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        moveBack.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        moveBack.setText("Move Back");
+        moveBack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                moveBackMousePressed(evt);
+            }
+        });
+
+        moveFront.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        moveFront.setText("Move Front");
+        moveFront.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                moveFrontMousePressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
@@ -324,23 +343,30 @@ public class Whiteboard extends javax.swing.JFrame {
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(controlPanelLayout.createSequentialGroup()
-                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(shapePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                    .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(controlPanelLayout.createSequentialGroup()
                             .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1)
-                            .addComponent(currentShapesLabel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(shapePanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, controlPanelLayout.createSequentialGroup()
-                            .addComponent(createShapeLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(deleteButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(clearButton))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
+                        .addGroup(controlPanelLayout.createSequentialGroup()
+                            .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel1)
+                                .addGroup(controlPanelLayout.createSequentialGroup()
+                                    .addComponent(createShapeLabel)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(deleteButton)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(clearButton))
+                                .addGroup(controlPanelLayout.createSequentialGroup()
+                                    .addComponent(currentShapesLabel)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(moveBack)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(moveFront)))
+                            .addGap(0, 0, Short.MAX_VALUE))))
+                .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -358,7 +384,10 @@ public class Whiteboard extends javax.swing.JFrame {
                     .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
                     .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(currentShapesLabel)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(currentShapesLabel)
+                    .addComponent(moveBack)
+                    .addComponent(moveFront))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -397,11 +426,11 @@ public class Whiteboard extends javax.swing.JFrame {
         canvas.setLayout(canvasLayout);
         canvasLayout.setHorizontalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
+            .addGap(0, 522, Short.MAX_VALUE)
         );
         canvasLayout.setVerticalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 427, Short.MAX_VALUE)
         );
 
         box.add(canvas, java.awt.BorderLayout.CENTER);
@@ -462,11 +491,11 @@ public class Whiteboard extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, 904, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
         );
 
         pack();
@@ -474,19 +503,19 @@ public class Whiteboard extends javax.swing.JFrame {
     private void addShapeToCanvas(String shapeType) {
         switch (shapeType) {
             case "rectangle":
-                DRectModel rm = new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY);
+                DRectModel rm = new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor);
                 canvas.addShape(rm, shapeTableModel);
                 break;
             case "oval":
-                DOvalModel om = new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, Color.GRAY);
+                DOvalModel om = new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor);
                 canvas.addShape(om, shapeTableModel);
                 break;
             case "line":
-                DLineModel lm = new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY);
+                DLineModel lm = new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor);
                 canvas.addShape(lm, shapeTableModel);
                 break;
             case "text":
-                DTextModel tm = new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, Color.GRAY, textField.getText(), fontChooser.getSelectedItem());
+                DTextModel tm = new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor, textField.getText(), fontChooser.getSelectedItem());
                 canvas.addShape(tm, shapeTableModel);
                 break;
             //nothing
@@ -517,7 +546,7 @@ public class Whiteboard extends javax.swing.JFrame {
     }//GEN-LAST:event_colorChooserButtonMouseClicked
     private boolean clickedWithinShape(Point p) {
         int shapeCount = canvas.list.size();
-        for (int i = 0; i < shapeCount; i++) {
+        for (int i = shapeCount - 1; i >= 0; i--) {
             DShape shape = canvas.list.get(i);
             if (shape.getBounds().contains(p)) {
                 //select the shape
@@ -820,6 +849,39 @@ public class Whiteboard extends javax.swing.JFrame {
         addShapeToCanvas("text");
     }//GEN-LAST:event_addTextButtonMousePressed
 
+    private void moveBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveBackMousePressed
+        if(canvas.selectedShape != null){
+            int shapeCount = canvas.list.size();
+            for (int i = 0; i < shapeCount; i++) {
+                if(canvas.selectedShape == canvas.list.get(i)){
+                    if(i == 0){
+                        return;
+                    }else{
+                        Collections.swap(canvas.list, i, i-1);
+                        repaint();
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_moveBackMousePressed
+
+    private void moveFrontMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveFrontMousePressed
+        if(canvas.selectedShape != null){
+            int shapeCount = canvas.list.size();
+            for (int i = 0; i < shapeCount; i++) {
+                if(canvas.selectedShape == canvas.list.get(i)){
+                    if(i + 1 > shapeCount -1){
+                        return;
+                    }else{
+                        Collections.swap(canvas.list, i, i + 1);
+                        repaint();
+                        return;
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_moveFrontMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -874,6 +936,8 @@ public class Whiteboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JButton moveBack;
+    private javax.swing.JButton moveFront;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JLabel portLabel;
