@@ -14,40 +14,39 @@ public class DText extends DShape {
         super(dsm);
 
     }
-
-    
      
     @Override
     public void draw(Graphics g) {
-        g.setColor(model.getColor());
-        DTextModel dtm = (DTextModel) model;
-        Rectangle bounds = dtm.getBounds();
-        Font font = dtm.getFont();
-        font.deriveFont(1.0f);
-        float size = 1;
-        boolean isSmallerThanBounds = true;
-        while (isSmallerThanBounds) {
-            size = (size * 1.1f) + 1;
-            Font increasingFont = font.deriveFont(size);
-            FontMetrics fm = g.getFontMetrics(font);
-            Rectangle fontBounds = fm.getStringBounds(dtm.getText(), g).getBounds();
-            if ((fontBounds.getHeight() > bounds.getHeight()) || (fontBounds.getWidth()) > bounds.getWidth()) {
-                isSmallerThanBounds = false;
-            }
-            font = increasingFont;
-        }
-        g.setFont(font);
+    	 g.setColor(model.getColor());
+         DTextModel dtm = (DTextModel) model;
+         Rectangle bounds = dtm.getBounds();
+         Font font = dtm.getFont();
+         font.deriveFont(1.0f);
+         float size = 1;
+         boolean isSmallerThanBounds = true;
+         while (isSmallerThanBounds) {
+             size = (size * 1.1f) + 1;
+             Font increasingFont = font.deriveFont(size);
+             FontMetrics fm = g.getFontMetrics(font);
+             Rectangle fontBounds = fm.getStringBounds(dtm.getText(), g).getBounds();
+             if ((fontBounds.getHeight() > bounds.getHeight()) || (fontBounds.getWidth()) > bounds.getWidth()) {
+                 isSmallerThanBounds = false;
+             }
+             font = increasingFont;
+         }
+         g.setFont(font);
 
-        Point bottom = pointAtBottom(font, g, dtm);
-        Point pos = new Point(bottom.x + dtm.getX(), bottom.y + dtm.getY());
+         Point pointAtBottom = new Point();
+         pointAtBottom.y = pointAtBottom.y + getH();
+         Point pos = new Point(pointAtBottom.x + dtm.getX(), pointAtBottom.y + dtm.getY());
 
-        Shape clip = g.getClip();
-        g.setClip(bounds);
+         Shape clip = g.getClip();
+         g.setClip(bounds);
 
-        g.setColor(dtm.getColor());
-        g.drawString(dtm.getText(), pos.x, pos.y);
+         g.setColor(dtm.getColor());
+         g.drawString(dtm.getText(), pos.x, pos.y);
 
-        g.setClip(clip);
+         g.setClip(clip);
     }
 
     public void setText(String text) {
@@ -79,12 +78,6 @@ public class DText extends DShape {
     public String toString() {
         DTextModel dtm = (DTextModel) model;
         return "DText{" + dtm.toString() + '}';
-    }
-
-    public Point pointAtBottom(Font font, Graphics g, DTextModel dtm) {
-        Point bot = new Point();
-        bot.y = bot.y + getH();
-        return bot;
     }
 
 }
