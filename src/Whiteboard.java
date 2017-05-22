@@ -43,16 +43,21 @@ public class Whiteboard extends javax.swing.JFrame {
     private int knobPoint = 0;
     private Rectangle origSize = null;
     private ShapeTableModel shapeTableModel;
+    public static final String IP = "127.0.0.1";
+    public static final int DEFAULT_PORT = 39587;
+    public static final String NORMAL_STATUS = "NORMAL";
+    public static final String CLIENT_STATUS = "CLIENT";
+    public static final String SERVER_STATUS = "SERVER";
+    private String status;
 
-    
     /**
      * Creates new form WhiteBoard
      */
     public Whiteboard() {
+        status = NORMAL_STATUS;
         initComponents();
         shapeTableModel = new ShapeTableModel(canvas);
         currentShapesTable.setModel(shapeTableModel);
-
     }
 
     /**
@@ -67,24 +72,27 @@ public class Whiteboard extends javax.swing.JFrame {
         openFileChooser = new javax.swing.JFileChooser();
         box = new javax.swing.JPanel();
         controlPanel = new javax.swing.JPanel();
+        statusPanel = new javax.swing.JPanel();
+        statusTextLabel = new javax.swing.JLabel();
+        statusLabel = new javax.swing.JLabel();
+        ipLabel = new javax.swing.JLabel();
+        portLabel = new javax.swing.JLabel();
         createShapeLabel = new javax.swing.JLabel();
         shapePanel1 = new javax.swing.JPanel();
         addRectangleButton = new javax.swing.JButton();
         addOvalButton = new javax.swing.JButton();
         addLineButton = new javax.swing.JButton();
-        textPanel = new javax.swing.JPanel();
-        textButton = new javax.swing.JButton();
         textField = new javax.swing.JTextField();
+        textButton = new javax.swing.JButton();
         fontChooser = new java.awt.Choice();
         currentShapesLabel = new javax.swing.JLabel();
         tableScrollPane = new javax.swing.JScrollPane();
         currentShapesTable = new javax.swing.JTable();
-        colorPickerPanel = new javax.swing.JPanel();
-        colorChooserButton = new javax.swing.JButton();
-        currentColorPreviewPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         clearButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        currentColorPreviewPanel = new javax.swing.JPanel();
+        colorChooserButton = new javax.swing.JButton();
         canvas = new Canvas();
         jMenuBar2 = new javax.swing.JMenuBar();
         fileName = new javax.swing.JMenu();
@@ -99,16 +107,57 @@ public class Whiteboard extends javax.swing.JFrame {
 
         box.setBackground(new java.awt.Color(204, 255, 204));
         box.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        box.setMinimumSize(new java.awt.Dimension(600, 400));
-        box.setPreferredSize(new java.awt.Dimension(600, 400));
+        box.setMinimumSize(new java.awt.Dimension(750, 400));
+        box.setPreferredSize(new java.awt.Dimension(750, 400));
         box.setLayout(new java.awt.BorderLayout());
 
         controlPanel.setBackground(new java.awt.Color(153, 255, 204));
         controlPanel.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         controlPanel.setMinimumSize(new java.awt.Dimension(200, 400));
+        controlPanel.setPreferredSize(new java.awt.Dimension(300, 400));
+
+        statusPanel.setPreferredSize(new java.awt.Dimension(100, 100));
+
+        statusTextLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        statusTextLabel.setText("Status:");
+
+        statusLabel.setText("N/A");
+        statusLabel.setText(status);
+
+        javax.swing.GroupLayout statusPanelLayout = new javax.swing.GroupLayout(statusPanel);
+        statusPanel.setLayout(statusPanelLayout);
+        statusPanelLayout.setHorizontalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(statusTextLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(statusPanelLayout.createSequentialGroup()
+                        .addComponent(ipLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(portLabel))
+                    .addComponent(statusLabel))
+                .addContainerGap(64, Short.MAX_VALUE))
+        );
+        statusPanelLayout.setVerticalGroup(
+            statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(statusPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(statusTextLabel)
+                    .addComponent(statusLabel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ipLabel)
+                    .addComponent(portLabel))
+                .addContainerGap())
+        );
 
         createShapeLabel.setFont(createShapeLabel.getFont().deriveFont(createShapeLabel.getFont().getSize()+3f));
         createShapeLabel.setText("1. Pick a Shape");
+
+        shapePanel1.setPreferredSize(new java.awt.Dimension(250, 108));
 
         addRectangleButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         addRectangleButton.setText("Rectangle");
@@ -138,6 +187,17 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         });
 
+        textField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        textField.setText("Enter Text");
+        textField.setMinimumSize(new java.awt.Dimension(144, 23));
+        textField.setNextFocusableComponent(fontChooser);
+        textField.setPreferredSize(new java.awt.Dimension(144, 23));
+        textField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                textFieldKeyTyped(evt);
+            }
+        });
+
         textButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         textButton.setText("Text");
         textButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -146,16 +206,9 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         });
 
-        textField.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        textField.setText("Enter Text");
-        textField.setNextFocusableComponent(fontChooser);
-        textField.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                textFieldKeyTyped(evt);
-            }
-        });
-
         fontChooser.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        fontChooser.setMinimumSize(new java.awt.Dimension(144, 21));
+        fontChooser.setPreferredSize(new java.awt.Dimension(144, 21));
         for (String font : fonts) {
             fontChooser.add(font);
         }
@@ -165,49 +218,27 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout textPanelLayout = new javax.swing.GroupLayout(textPanel);
-        textPanel.setLayout(textPanelLayout);
-        textPanelLayout.setHorizontalGroup(
-            textPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(textPanelLayout.createSequentialGroup()
-                .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(textPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                    .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        textPanelLayout.setVerticalGroup(
-            textPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(textPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(textPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(textPanelLayout.createSequentialGroup()
-                        .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(fontChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout shapePanel1Layout = new javax.swing.GroupLayout(shapePanel1);
         shapePanel1.setLayout(shapePanel1Layout);
         shapePanel1Layout.setHorizontalGroup(
             shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shapePanel1Layout.createSequentialGroup()
-                .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(66, 66, 66))
-            .addGroup(shapePanel1Layout.createSequentialGroup()
-                .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(shapePanel1Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fontChooser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(textField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(shapePanel1Layout.createSequentialGroup()
+                        .addComponent(addRectangleButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addLineButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
-
-        shapePanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {addOvalButton, addRectangleButton});
-
         shapePanel1Layout.setVerticalGroup(
             shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(shapePanel1Layout.createSequentialGroup()
@@ -216,14 +247,21 @@ public class Whiteboard extends javax.swing.JFrame {
                     .addComponent(addRectangleButton)
                     .addComponent(addOvalButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(textPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(2, 2, 2))
+                .addGroup(shapePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(shapePanel1Layout.createSequentialGroup()
+                        .addComponent(textField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(fontChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textButton, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(41, 41, 41))
         );
 
         shapePanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {addLineButton, addOvalButton, addRectangleButton});
 
         currentShapesLabel.setFont(currentShapesLabel.getFont().deriveFont(currentShapesLabel.getFont().getSize()+3f));
         currentShapesLabel.setText("Current Shapes");
+
+        tableScrollPane.setPreferredSize(new java.awt.Dimension(250, 100));
 
         currentShapesTable.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         currentShapesTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -236,30 +274,6 @@ public class Whiteboard extends javax.swing.JFrame {
         ));
         currentShapesTable.getTableHeader().setReorderingAllowed(false);
         tableScrollPane.setViewportView(currentShapesTable);
-
-        colorPickerPanel.setLayout(new java.awt.BorderLayout());
-
-        colorChooserButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        colorChooserButton.setText("Open Color Chooser");
-        colorChooserButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                colorChooserButtonMouseClicked(evt);
-            }
-        });
-        colorPickerPanel.add(colorChooserButton, java.awt.BorderLayout.WEST);
-
-        javax.swing.GroupLayout currentColorPreviewPanelLayout = new javax.swing.GroupLayout(currentColorPreviewPanel);
-        currentColorPreviewPanel.setLayout(currentColorPreviewPanelLayout);
-        currentColorPreviewPanelLayout.setHorizontalGroup(
-            currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 167, Short.MAX_VALUE)
-        );
-        currentColorPreviewPanelLayout.setVerticalGroup(
-            currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 35, Short.MAX_VALUE)
-        );
-
-        colorPickerPanel.add(currentColorPreviewPanel, java.awt.BorderLayout.CENTER);
 
         jLabel1.setFont(jLabel1.getFont().deriveFont(jLabel1.getFont().getSize()+3f));
         jLabel1.setText("2. Pick a color");
@@ -280,24 +294,54 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         });
 
+        colorChooserButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        colorChooserButton.setText("choose color");
+        colorChooserButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                colorChooserButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout currentColorPreviewPanelLayout = new javax.swing.GroupLayout(currentColorPreviewPanel);
+        currentColorPreviewPanel.setLayout(currentColorPreviewPanelLayout);
+        currentColorPreviewPanelLayout.setHorizontalGroup(
+            currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(currentColorPreviewPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(colorChooserButton)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        currentColorPreviewPanelLayout.setVerticalGroup(
+            currentColorPreviewPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(currentColorPreviewPanelLayout.createSequentialGroup()
+                .addComponent(colorChooserButton)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout controlPanelLayout = new javax.swing.GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(shapePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(colorPickerPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(controlPanelLayout.createSequentialGroup()
-                .addComponent(createShapeLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deleteButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(clearButton))
-            .addGroup(controlPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(currentShapesLabel))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(controlPanelLayout.createSequentialGroup()
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(currentShapesLabel))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(statusPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(shapePanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, controlPanelLayout.createSequentialGroup()
+                            .addComponent(createShapeLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(deleteButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(clearButton))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         controlPanelLayout.setVerticalGroup(
             controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,19 +352,24 @@ public class Whiteboard extends javax.swing.JFrame {
                     .addComponent(deleteButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(shapePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(4, 4, 4)
-                .addComponent(colorPickerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
+                    .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(currentShapesLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE))
+                .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         box.add(controlPanel, java.awt.BorderLayout.WEST);
 
         canvas.setBackground(new java.awt.Color(255, 255, 255));
+        canvas.setMinimumSize(new java.awt.Dimension(400, 400));
+        canvas.setPreferredSize(new java.awt.Dimension(400, 400));
         canvas.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
                 canvasMouseDragged(evt);
@@ -349,11 +398,11 @@ public class Whiteboard extends javax.swing.JFrame {
         canvas.setLayout(canvasLayout);
         canvasLayout.setHorizontalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 368, Short.MAX_VALUE)
+            .addGap(0, 448, Short.MAX_VALUE)
         );
         canvasLayout.setVerticalGroup(
             canvasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 398, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
 
         box.add(canvas, java.awt.BorderLayout.CENTER);
@@ -414,7 +463,7 @@ public class Whiteboard extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, 698, Short.MAX_VALUE)
+            .addComponent(box, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -634,13 +683,15 @@ public class Whiteboard extends javax.swing.JFrame {
 
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
-        System.out.println("you clicked start client!");
+        statusLabel.setText(CLIENT_STATUS);
+        ipLabel.setText(IP);
+        portLabel.setText("");
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
     private void saveFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveFileMenuItemActionPerformed
         String filename = JOptionPane.showInputDialog("file name:");
-        if(!filename.isEmpty()){
-            File f = new File(filename+".xml");
+        if (!filename.isEmpty()) {
+            File f = new File(filename + ".xml");
             try {
                 canvas.saveCurrentCanvas(f);
             } catch (FileNotFoundException ex) {
@@ -650,24 +701,27 @@ public class Whiteboard extends javax.swing.JFrame {
     }//GEN-LAST:event_saveFileMenuItemActionPerformed
 
     private void openFileMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openFileMenuItemActionPerformed
-        //let the user choose a file 
-        FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter("xml files (*.xml)","xml");
-        openFileChooser.setFileFilter(xmlfilter);
-        int returnValue = openFileChooser.showDialog(this, "open file");
-         if(returnValue==JFileChooser.APPROVE_OPTION){
-             //make a file if they select a file
-             File f = openFileChooser.getSelectedFile();
-             try {
-                 canvas.loadFromFile(f, shapeTableModel);
-             } catch (FileNotFoundException ex) {
-                 Logger.getLogger(Whiteboard.class.getName()).log(Level.SEVERE, null, ex);
-             }
-         }
+        //let the user choose a file if not a server or client
+        if (status.equals(NORMAL_STATUS)) {
+            FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter("xml files (*.xml)", "xml");
+            openFileChooser.setFileFilter(xmlfilter);
+            int returnValue = openFileChooser.showDialog(this, "open file");
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                //make a file if they select a file
+                File f = openFileChooser.getSelectedFile();
+                try {
+                    canvas.loadFromFile(f, shapeTableModel);
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(Whiteboard.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
     }//GEN-LAST:event_openFileMenuItemActionPerformed
 
     private void startServerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerMenuItemActionPerformed
         String port = JOptionPane.showInputDialog(this, "Enter Port Number", "Server Setup", JOptionPane.QUESTION_MESSAGE);
         startServer(port);
+        
     }//GEN-LAST:event_startServerMenuItemActionPerformed
 
     private void addRectangleButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addRectangleButtonMousePressed
@@ -703,26 +757,6 @@ public class Whiteboard extends javax.swing.JFrame {
         resetTextBoxItems();
     }//GEN-LAST:event_clearButtonMousePressed
 
-    private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
-        addShapeToCanvas("text");
-    }//GEN-LAST:event_textButtonMousePressed
-
-    private void textFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyTyped
-        if (canvas.selectedShape instanceof DText) {
-            DText dtxt = (DText) canvas.selectedShape;
-            dtxt.setText(textField.getText());
-            repaint();
-        }//if text is selected, update as you type into text box
-    }//GEN-LAST:event_textFieldKeyTyped
-
-    private void fontChooserItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fontChooserItemStateChanged
-        // if a text obj selected, update the font when changed!
-        if (canvas.selectedShape instanceof DText) {
-            DText dtxt = (DText) canvas.selectedShape;
-            dtxt.setFont(Font.decode(fontChooser.getSelectedItem()));
-            repaint();
-        }
-    }//GEN-LAST:event_fontChooserItemStateChanged
     private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
         int notches = evt.getWheelRotation();
         if (canvas.selectedShape != null) {
@@ -742,20 +776,41 @@ public class Whiteboard extends javax.swing.JFrame {
     private void saveAsImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsImageActionPerformed
         // TODO add your handling code here:
         String filename = JOptionPane.showInputDialog("image name:");
-        if(filename.isEmpty()){
+        if (filename.isEmpty()) {
             //no name entered, do nothing
             //TODO add some default naming scheme?
-        }else{
-            File f = new File("art-"+filename + ".png");
-           
+        } else {
+            File f = new File("art-" + filename + ".png");
+
             try {
                 //you have a file, now get the stuff from canvas and save
-                canvas.saveCurrentCanvasToImage(f);  
+                canvas.saveCurrentCanvasToImage(f);
             } catch (IOException ex) {
                 Logger.getLogger(Whiteboard.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_saveAsImageActionPerformed
+
+    private void fontChooserItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_fontChooserItemStateChanged
+        // if a text obj selected, update the font when changed!
+        if (canvas.selectedShape instanceof DText) {
+            DText dtxt = (DText) canvas.selectedShape;
+            dtxt.setFont(Font.decode(fontChooser.getSelectedItem()));
+            repaint();
+        }
+    }//GEN-LAST:event_fontChooserItemStateChanged
+
+    private void textFieldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyTyped
+        if (canvas.selectedShape instanceof DText) {
+            DText dtxt = (DText) canvas.selectedShape;
+            dtxt.setText(textField.getText());
+            repaint();
+        }//if text is selected, update as you type into text box
+    }//GEN-LAST:event_textFieldKeyTyped
+
+    private void textButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textButtonMousePressed
+        addShapeToCanvas("text");
+    }//GEN-LAST:event_textButtonMousePressed
 
     /**
      * @param args the command line arguments
@@ -773,15 +828,12 @@ public class Whiteboard extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Whiteboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Whiteboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Whiteboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Whiteboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        
         //</editor-fold>
         //</editor-fold>
 
@@ -801,7 +853,6 @@ public class Whiteboard extends javax.swing.JFrame {
     private Canvas canvas;
     private javax.swing.JButton clearButton;
     private javax.swing.JButton colorChooserButton;
-    private javax.swing.JPanel colorPickerPanel;
     private javax.swing.JPanel controlPanel;
     private javax.swing.JLabel createShapeLabel;
     private javax.swing.JPanel currentColorPreviewPanel;
@@ -810,20 +861,24 @@ public class Whiteboard extends javax.swing.JFrame {
     private javax.swing.JButton deleteButton;
     private javax.swing.JMenu fileName;
     private java.awt.Choice fontChooser;
+    private javax.swing.JLabel ipLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openFileMenuItem;
+    private javax.swing.JLabel portLabel;
     private javax.swing.JMenuItem saveAsImage;
     private javax.swing.JMenuItem saveFileMenuItem;
     private javax.swing.JPanel shapePanel1;
     private javax.swing.JMenuItem startClientMenuItem;
     private javax.swing.JMenuItem startServerMenuItem;
+    private javax.swing.JLabel statusLabel;
+    private javax.swing.JPanel statusPanel;
+    private javax.swing.JLabel statusTextLabel;
     private javax.swing.JScrollPane tableScrollPane;
     private javax.swing.JButton textButton;
     private javax.swing.JTextField textField;
-    private javax.swing.JPanel textPanel;
     // End of variables declaration//GEN-END:variables
 
     private void startServer(String port) {
@@ -850,7 +905,8 @@ public class Whiteboard extends javax.swing.JFrame {
             }
         }
 
-        System.out.println(p);
+        statusLabel.setText(SERVER_STATUS);
+        portLabel.setText("port:"+p);
 //            Server server = new Server(p);
 //            server.listen();
     }
