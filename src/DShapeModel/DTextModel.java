@@ -10,10 +10,12 @@ public class DTextModel extends DShapeModel {
 
     public DTextModel() {
         super();
+        text="hello";
+        font = Font.decode("dialog");
     }
 
-    public DTextModel(int x, int y, int w, int h, Color c, String text, String fontName) {
-        super(x, y, w, h, c);
+    public DTextModel(int x, int y, int w, int h, Color c, String text, String fontName,int id) {
+        super(x, y, w, h, c, id);
         this.text = text;
         //WHAT I WANTED TO DO
         // Font f = Font.getFont(fontName, Font.getFont(Font.DIALOG));

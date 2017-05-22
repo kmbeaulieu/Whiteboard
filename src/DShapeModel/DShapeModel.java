@@ -3,10 +3,11 @@ package DShapeModel;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DShapeModel{
+public class DShapeModel implements Serializable{
 
     private int x;
     private int y;
@@ -14,11 +15,12 @@ public class DShapeModel{
     private int h;
     private Color color;
     private List<ModelListener> listeners = new ArrayList<>();
-
+    private int id;
+    
     /**
      * Default shape model constructor.
      */
-    DShapeModel() {
+    public DShapeModel() {
         x = 0;
         y = 0;
         w = 0;
@@ -34,13 +36,31 @@ public class DShapeModel{
      * @param w width of the shape
      * @param h height of the shape
      * @param c color of the shape
+     * @param id for client/server purposes
      */
-    public DShapeModel(int x, int y, int w, int h, Color c) {
+    public DShapeModel(int x, int y, int w, int h, Color c, int id) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
         this.color = c;
+        this.id=id;
+    }
+
+    public List<ModelListener> getListeners() {
+        return listeners;
+    }
+
+    public void setListeners(List<ModelListener> listeners) {
+        this.listeners = listeners;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getX() {
@@ -136,10 +156,11 @@ public class DShapeModel{
 
     @Override
     public String toString() {
-        return "DShapeModel{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", color=" + color + ", listeners=" + listeners + '}';
+        return "DShapeModel{"  +"id="+id+ ", x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", color=" + color + ", listeners=" + listeners + '}';
     }
 
     public void removeAllListeners() {
         listeners.clear();
     }
+    
 }

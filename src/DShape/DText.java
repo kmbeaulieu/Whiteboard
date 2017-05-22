@@ -14,7 +14,9 @@ public class DText extends DShape {
         super(dsm);
 
     }
-     
+     public DText(){
+         super();
+     }
     @Override
     public void draw(Graphics g) {
     	 g.setColor(model.getColor());

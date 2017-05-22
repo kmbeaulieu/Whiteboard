@@ -8,7 +8,7 @@ public class DLineModel extends DShapeModel{
         super();
     }
     
-    public DLineModel(int x, int y, int w, int h, Color c){
-        super(x,y,w,h,c);
+    public DLineModel(int x, int y, int w, int h, Color c, int id){
+        super(x,y,w,h,c,id);
     }
 }

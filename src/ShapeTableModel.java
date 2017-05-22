@@ -3,6 +3,7 @@ import DShape.DRect;
 import DShapeModel.DShapeModel;
 import DShapeModel.ModelListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.table.AbstractTableModel;
 
 public class ShapeTableModel extends AbstractTableModel implements ModelListener {
@@ -95,5 +96,12 @@ public class ShapeTableModel extends AbstractTableModel implements ModelListener
     void addRow(DRect r) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public String toString() {
+        return "ShapeTableModel{" + "c=" + c.getName() + ", columnNames=" + Arrays.toString(columnNames) + ", rows=" + rows + '}';
+    }
+    
+    
 
 }

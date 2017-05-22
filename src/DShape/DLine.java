@@ -10,6 +10,9 @@ public class DLine extends DShape {
     public DLine(DShapeModel dsm) {
         super(dsm);
     }
+    public DLine(){
+        super();
+    }
     @Override
     public void draw(Graphics g){
             g.setColor(model.getColor());

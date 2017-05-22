@@ -155,12 +155,12 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="shapePanel1" pref="347" max="32767" attributes="0"/>
+                          <Component id="shapePanel1" pref="356" max="32767" attributes="0"/>
                           <Component id="tableScrollPane" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="currentColorPreviewPanel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="statusPanel" pref="171" max="32767" attributes="0"/>
+                              <Component id="statusPanel" pref="188" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -175,9 +175,9 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="currentShapesLabel" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="moveBack" min="-2" max="-2" attributes="0"/>
+                                      <Component id="moveBackButton" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="moveFront" min="-2" max="-2" attributes="0"/>
+                                      <Component id="moveFrontButton" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -207,8 +207,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="currentShapesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="moveBack" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="moveFront" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="moveBackButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="moveFrontButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="tableScrollPane" min="-2" max="-2" attributes="0"/>
@@ -252,7 +252,7 @@
                               <Component id="statusTextLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="statusLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="37" max="32767" attributes="0"/>
+                          <EmptySpace pref="50" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="ipLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="portLabel" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -549,7 +549,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="moveBack">
+            <Component class="javax.swing.JButton" name="moveBackButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="14" style="0"/>
@@ -557,10 +557,10 @@
                 <Property name="text" type="java.lang.String" value="Move Back"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="moveBackMousePressed"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="moveBackButtonMousePressed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="moveFront">
+            <Component class="javax.swing.JButton" name="moveFrontButton">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="14" style="0"/>
@@ -568,7 +568,7 @@
                 <Property name="text" type="java.lang.String" value="Move Front"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="moveFrontMousePressed"/>
+                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="moveFrontButtonMousePressed"/>
               </Events>
             </Component>
           </SubComponents>

@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import javax.imageio.ImageIO;
 
 /*
@@ -38,36 +39,31 @@ public class Canvas extends JPanel {
      * Add a shape to the canvas
      *
      * @param dsm the dshapemodel to add to the canvas
+     * @param stm to update the table in the whiteboard
      */
     public void addShape(DShapeModel dsm, ShapeTableModel stm) {
         // this might return something in the future?
+        DShape toAdd = null;
         if (dsm instanceof DRectModel) {
-            DRect r = new DRect(dsm);
-            list.add(r);
-            //do listener stuff
-            stm.addRow(dsm);
-            r.addListener(stm);
-            selectedShape = r;
-        } else if (dsm instanceof DOvalModel) {
-            DOval o = new DOval(dsm);
-            list.add(o);
-            stm.addRow(dsm);
-            o.addListener(stm);
-            selectedShape = o;
-        } else if (dsm instanceof DLineModel) {
-            DLine l = new DLine(dsm);
-            list.add(l);
-            stm.addRow(dsm);
-            l.addListener(stm);
-            selectedShape = l;
-        } else if (dsm instanceof DTextModel) {
-            DText t = new DText(dsm);
-            list.add(t);
-            stm.addRow(dsm);
-            t.addListener(stm);
-            selectedShape = t;
-        }
+            toAdd = new DRect();
 
+        } else if (dsm instanceof DOvalModel) {
+            toAdd = new DOval(dsm);
+
+        } else if (dsm instanceof DLineModel) {
+            toAdd = new DLine(dsm);
+
+        } else if (dsm instanceof DTextModel) {
+            toAdd = new DText(dsm);
+
+        } else {
+            return;
+        }
+        toAdd.setModel(dsm);
+        selectedShape = toAdd;
+        list.add(toAdd);
+        stm.addRow(toAdd.getModel());
+        toAdd.addListener(stm);
     }
 
     public DShape getSelectedShape() {
@@ -76,6 +72,7 @@ public class Canvas extends JPanel {
 
     /**
      * Remove the currently selected shape. If nothing is selected, do nothing.
+     *
      * @param stm table model to update its listener
      */
     public void remove(ShapeTableModel stm) {
@@ -152,4 +149,42 @@ public class Canvas extends JPanel {
     public void clearSelectedShape() {
         selectedShape = null;
     }
+
+    void moveFront() {
+        if (selectedShape != null) {
+            int shapeCount = list.size();
+            for (int i = 0; i < shapeCount; i++) {
+                if (selectedShape == list.get(i)) {
+                    if (i + 1 > shapeCount - 1) {
+                        return;
+                    } else {
+                        Collections.swap(list, i, i + 1);
+                        repaint();
+                        return;
+                    }
+                }
+            }
+        }
+    }
+
+    void moveBack() {
+        if (selectedShape != null) {
+            int shapeCount = list.size();
+            for (int i = 0; i < shapeCount; i++) {
+                if (selectedShape == list.get(i)) {
+                    if (i == 0) {
+                        return;
+                    } else {
+                        Collections.swap(list, i, i - 1);
+                        repaint();
+                    }
+                }
+            }
+        }
+    }
+
+    void updateShape(DShapeModel model, ShapeTableModel shapeTableModel) {
+        //TODO add this from the button presses in whiteboard
+    }
+
 }

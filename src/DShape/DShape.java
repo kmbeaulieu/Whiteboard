@@ -18,7 +18,13 @@ public abstract class DShape implements ModelListener {
 	public DShape(DShapeModel dsm){
 		model = dsm;
 	}
+        public DShape(){
+            model = null;
+        }
 
+        public void setModel(DShapeModel m){
+            model = m;
+        }
         public void setColor(Color c){
             model.setColor(c);
         }
@@ -67,7 +73,13 @@ public abstract class DShape implements ModelListener {
         public int getY(){
            return model.getY();
         }
+        public int getID(){
+            return model.getId();
+        }
 
+        public void setID(int id){
+            model.setId(id);
+        }
         public Canvas getCanvas(){
             return c;
         }

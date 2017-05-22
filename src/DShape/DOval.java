@@ -9,6 +9,9 @@ public class DOval extends DShape {
         super(dsm);
     }
 
+    public DOval(){
+        super();
+    }
     @Override
     public void draw(Graphics g) {
         g.setColor(model.getColor());

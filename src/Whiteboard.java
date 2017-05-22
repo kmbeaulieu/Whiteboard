@@ -6,16 +6,26 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.util.Collections;
+import java.util.List;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -27,9 +37,9 @@ import java.util.Collections;
  * @author Krystle
  */
 public class Whiteboard extends javax.swing.JFrame {
+//teammate made variables, netbeans spawned gui variables are at bottom
 
     private static Color currentColor = Color.GRAY;
-    // private CurrentShape currentShapeSelected = CurrentShape.NONE;
     private int startX = 0;
     private int startY = 0;
     private final int defaultSize = 60;
@@ -44,12 +54,27 @@ public class Whiteboard extends javax.swing.JFrame {
     private int knobPoint = 0;
     private Rectangle origSize = null;
     private ShapeTableModel shapeTableModel;
+    //-------------CONSTANTS-------------
     public static final String IP = "127.0.0.1";
     public static final int DEFAULT_PORT = 39587;
     public static final String NORMAL_STATUS = "NORMAL";
     public static final String CLIENT_STATUS = "CLIENT";
     public static final String SERVER_STATUS = "SERVER";
+    public static final String ADD_COMMAND = "add";
+    public static final String DELETE_COMMAND = "delete";
+    public static final String UPDATE_COMMAND = "update";
+    public static final String CLEAR_COMMAND = "clear";
+    public static final String FRONT_COMMAND = "front";
+    public static final String BACK_COMMAND = "back";
+    private static final int MAX_PORT = 65535;
+    //-------------END CONSTANTS-------------
+    //-------------SERVER VARS-------------
+    public Whiteboard client;//shouldnt be public maybe..
     private String status;
+    private List<ObjectOutputStream> outs = new ArrayList<ObjectOutputStream>();
+    private List<Whiteboard> clients;//this way?
+    private int startID = 0;
+    //-------------END SERVER VARS-------------
 
     /**
      * Creates new form WhiteBoard
@@ -57,7 +82,7 @@ public class Whiteboard extends javax.swing.JFrame {
     public Whiteboard() {
         status = NORMAL_STATUS;
         initComponents();
-        shapeTableModel = new ShapeTableModel(canvas);
+        shapeTableModel = new ShapeTableModel(canvas);          
         currentShapesTable.setModel(shapeTableModel);
     }
 
@@ -94,8 +119,8 @@ public class Whiteboard extends javax.swing.JFrame {
         deleteButton = new javax.swing.JButton();
         currentColorPreviewPanel = new javax.swing.JPanel();
         colorChooserButton = new javax.swing.JButton();
-        moveBack = new javax.swing.JButton();
-        moveFront = new javax.swing.JButton();
+        moveBackButton = new javax.swing.JButton();
+        moveFrontButton = new javax.swing.JButton();
         canvas = new Canvas();
         jMenuBar2 = new javax.swing.JMenuBar();
         fileName = new javax.swing.JMenu();
@@ -150,7 +175,7 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(statusTextLabel)
                     .addComponent(statusLabel))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(statusPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(ipLabel)
                     .addComponent(portLabel))
@@ -320,19 +345,19 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        moveBack.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        moveBack.setText("Move Back");
-        moveBack.addMouseListener(new java.awt.event.MouseAdapter() {
+        moveBackButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        moveBackButton.setText("Move Back");
+        moveBackButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                moveBackMousePressed(evt);
+                moveBackButtonMousePressed(evt);
             }
         });
 
-        moveFront.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        moveFront.setText("Move Front");
-        moveFront.addMouseListener(new java.awt.event.MouseAdapter() {
+        moveFrontButton.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        moveFrontButton.setText("Move Front");
+        moveFrontButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                moveFrontMousePressed(evt);
+                moveFrontButtonMousePressed(evt);
             }
         });
 
@@ -343,29 +368,28 @@ public class Whiteboard extends javax.swing.JFrame {
             .addGroup(controlPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(shapePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                    .addComponent(shapePanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                     .addComponent(tableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(controlPanelLayout.createSequentialGroup()
-                            .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE))
-                        .addGroup(controlPanelLayout.createSequentialGroup()
-                            .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel1)
-                                .addGroup(controlPanelLayout.createSequentialGroup()
-                                    .addComponent(createShapeLabel)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(deleteButton)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(clearButton))
-                                .addGroup(controlPanelLayout.createSequentialGroup()
-                                    .addComponent(currentShapesLabel)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(moveBack)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(moveFront)))
-                            .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(controlPanelLayout.createSequentialGroup()
+                        .addComponent(currentColorPreviewPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(statusPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE))
+                    .addGroup(controlPanelLayout.createSequentialGroup()
+                        .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(controlPanelLayout.createSequentialGroup()
+                                .addComponent(createShapeLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(deleteButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(clearButton))
+                            .addGroup(controlPanelLayout.createSequentialGroup()
+                                .addComponent(currentShapesLabel)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(moveBackButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(moveFrontButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         controlPanelLayout.setVerticalGroup(
@@ -386,8 +410,8 @@ public class Whiteboard extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(controlPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(currentShapesLabel)
-                    .addComponent(moveBack)
-                    .addComponent(moveFront))
+                    .addComponent(moveBackButton)
+                    .addComponent(moveFrontButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -503,27 +527,54 @@ public class Whiteboard extends javax.swing.JFrame {
     private void addShapeToCanvas(String shapeType) {
         switch (shapeType) {
             case "rectangle":
-                DRectModel rm = new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor);
-                canvas.addShape(rm, shapeTableModel);
+                if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+                    DRectModel rm = new DRectModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor, ++startID);
+                    canvas.addShape(rm, shapeTableModel);
+
+                    if (status.equals(SERVER_STATUS)) {
+                        sendToClient(ADD_COMMAND, rm);
+                        System.out.println("sent to client");
+                    }
+                }
                 break;
             case "oval":
-                DOvalModel om = new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor);
-                canvas.addShape(om, shapeTableModel);
+                if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+                    DOvalModel om = new DOvalModel(nextFreeX, nextFreeY, defaultSize, defaultSize, currentColor, ++startID);
+                    canvas.addShape(om, shapeTableModel);
+
+                    if (status.equals(SERVER_STATUS)) {
+
+                        sendToClient(ADD_COMMAND, om);
+                        System.out.println("sent to client");
+                    }
+                }
                 break;
             case "line":
-                DLineModel lm = new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor);
-                canvas.addShape(lm, shapeTableModel);
+                if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+                    DLineModel lm = new DLineModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor, ++startID);
+                    canvas.addShape(lm, shapeTableModel);
+                    if (status.equals(SERVER_STATUS)) {
+
+                        sendToClient(ADD_COMMAND, lm);
+                        System.out.println("sent to client");
+                    }
+                }
                 break;
             case "text":
-                DTextModel tm = new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor, textField.getText(), fontChooser.getSelectedItem());
-                canvas.addShape(tm, shapeTableModel);
+                if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+                    DTextModel tm = new DTextModel(nextFreeX, nextFreeY, nextFreeX + defaultSize, nextFreeY + defaultSize, currentColor, textField.getText(), fontChooser.getSelectedItem(), ++startID);
+                    canvas.addShape(tm, shapeTableModel);
+                    if (status.equals(SERVER_STATUS)) {
+
+                        sendToClient(ADD_COMMAND, tm);
+                        System.out.println("sent to client");
+                    }
+                }
                 break;
             //nothing
             default:
                 break;
-
         }
-
         canvas.repaint();
         nextFreeX += defaultSize + shapeSpacing;
         if (nextFreeX > xBound - defaultSize) {
@@ -538,9 +589,11 @@ public class Whiteboard extends javax.swing.JFrame {
         currentColor = JColorChooser.showDialog(rootPane, "Pick a color", currentColor);
         if (currentColor != null) {
             currentColorPreviewPanel.setBackground(currentColor);
-            if (canvas.selectedShape != null) {
-                canvas.selectedShape.setColor(currentColor);
-                canvas.repaint();
+            if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+                if (canvas.selectedShape != null) {
+                    canvas.selectedShape.setColor(currentColor);
+                    canvas.repaint();
+                }
             }
         }
     }//GEN-LAST:event_colorChooserButtonMouseClicked
@@ -560,44 +613,45 @@ public class Whiteboard extends javax.swing.JFrame {
         return false;
     }
     private void canvasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMousePressed
-        // start a drag
-        startX = evt.getX();
-        startY = evt.getY();
-        Point p = new Point(evt.getX(), evt.getY());
-        DShape cShape = canvas.selectedShape; // current selected shape
-        if (cShape instanceof DText) {//if whatever you are selecting IS text
-            DText dtxt = (DText) cShape;
-            //update the textbox and font chooser to match what is selected
-            textField.setText(dtxt.getText());
-            fontChooser.select(dtxt.getFontName());
-            repaint(); // refresh canvas
-        } else if (cShape != null) {
-            //if it is another shape, disable text info
-            disableTextBoxItems();
-        } else {//if nothing selected, enable
-            resetTextBoxItems();
-        }
-        // if dragging within the knobs resize shape
-        if (cShape != null) {
-            knobPoint = cShape.getKnobs().getKnobPoint(p);
-            if (knobPoint != 0) {
-                resizing = true;
-                origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
-                return;
-
-            } else { // move shape
-                moving = true;
-                origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+        if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+            // start a drag
+            startX = evt.getX();
+            startY = evt.getY();
+            Point p = new Point(evt.getX(), evt.getY());
+            DShape cShape = canvas.selectedShape; // current selected shape
+            if (cShape instanceof DText) {//if whatever you are selecting IS text
+                DText dtxt = (DText) cShape;
+                //update the textbox and font chooser to match what is selected
+                textField.setText(dtxt.getText());
+                fontChooser.select(dtxt.getFontName());
+                repaint(); // refresh canvas
+            } else if (cShape != null) {
+                //if it is another shape, disable text info
+                disableTextBoxItems();
+            } else {//if nothing selected, enable
+                resetTextBoxItems();
             }
-        }
-        if (clickedWithinShape(p)) {
+            // if dragging within the knobs resize shape
+            if (cShape != null) {
+                knobPoint = cShape.getKnobs().getKnobPoint(p);
+                if (knobPoint != 0) {
+                    resizing = true;
+                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                    return;
 
-            moving = true;
-            return;
+                } else { // move shape
+                    moving = true;
+                    origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                }
+            }
+            if (clickedWithinShape(p)) {
+                moving = true;
+                return;
+            }
+            canvas.selectedShape = null; // unselect the shape if clicked on white area
+            resetTextBoxItems(); //nothing selected so allow users to input text for a new text shape
+            repaint(); // refresh canvas
         }
-        canvas.selectedShape = null; // unselect the shape if clicked on white area
-        resetTextBoxItems(); //nothing selected so allow users to input text for a new text shape
-        repaint(); // refresh canvas
     }//GEN-LAST:event_canvasMousePressed
 
 
@@ -609,63 +663,65 @@ public class Whiteboard extends javax.swing.JFrame {
     }//GEN-LAST:event_canvasMouseReleased
 
     private void canvasMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_canvasMouseDragged
-        int endX = evt.getX();
-        int endY = evt.getY();
-        // if shape is currently selected
-        if (resizing) {
-            int tx, ty, tw, th;
-            switch (knobPoint) {
-                case 1:
-                    if (canvas.selectedShape instanceof DLine) {
-                        canvas.selectedShape.setY(origSize.y - (startY - endY));
-                        canvas.selectedShape.setX(origSize.x - (startX - endX));
-                    } else {
+        if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+            int endX = evt.getX();
+            int endY = evt.getY();
+            // if shape is currently selected
+            if (resizing) {
+                int tx, ty, tw, th;
+                switch (knobPoint) {
+                    case 1:
+                        if (canvas.selectedShape instanceof DLine) {
+                            canvas.selectedShape.setY(origSize.y - (startY - endY));
+                            canvas.selectedShape.setX(origSize.x - (startX - endX));
+                        } else {
+                            tx = origSize.x - (startX - endX);
+                            ty = origSize.y - (startY - endY);
+                            tw = origSize.width + (startX - endX);
+                            th = origSize.height + (startY - endY);
+                            resizeShape(tx, ty, tw, th, 1);
+                        }
+                        break;
+                    case 2:
+                        if (canvas.selectedShape instanceof DLine) {
+                            canvas.selectedShape.setH(origSize.height - (startY - endY));
+                            canvas.selectedShape.setW(origSize.width - (startX - endX));
+                        } else {
+                            ty = origSize.y - (startY - endY);
+                            tw = origSize.width - (startX - endX);
+                            th = origSize.height + (startY - endY);
+                            resizeShape(origSize.x, ty, tw, th, 2);
+                        }
+                        break;
+                    case 3:
                         tx = origSize.x - (startX - endX);
-                        ty = origSize.y - (startY - endY);
                         tw = origSize.width + (startX - endX);
-                        th = origSize.height + (startY - endY);
-                        resizeShape(tx, ty, tw, th, 1);
-                    }
-                    break;
-                case 2:
-                    if (canvas.selectedShape instanceof DLine) {
-                        canvas.selectedShape.setH(origSize.height - (startY - endY));
-                        canvas.selectedShape.setW(origSize.width - (startX - endX));
-                    } else {
-                        ty = origSize.y - (startY - endY);
+                        th = origSize.height - (startY - endY);
+                        resizeShape(tx, origSize.y, tw, th, 3);
+                        break;
+                    case 4:
+                        th = origSize.height - (startY - endY);
                         tw = origSize.width - (startX - endX);
-                        th = origSize.height + (startY - endY);
-                        resizeShape(origSize.x, ty, tw, th, 2);
-                    }
-                    break;
-                case 3:
-                    tx = origSize.x - (startX - endX);
-                    tw = origSize.width + (startX - endX);
-                    th = origSize.height - (startY - endY);
-                    resizeShape(tx, origSize.y, tw, th, 3);
-                    break;
-                case 4:
-                    th = origSize.height - (startY - endY);
-                    tw = origSize.width - (startX - endX);
-                    resizeShape(origSize.x, origSize.y, tw, th, 4);
-                    break;
-                default:
-                    break;
+                        resizeShape(origSize.x, origSize.y, tw, th, 4);
+                        break;
+                    default:
+                        break;
+                }
+                repaint();
+                return;
             }
-            repaint();
-            return;
-        }
-        if (moving && canvas.selectedShape != null) {
-            if (canvas.selectedShape instanceof DLine) {
-                canvas.selectedShape.setX(origSize.x - (startX - endX));
-                canvas.selectedShape.setY(origSize.y - (startY - endY));
-                canvas.selectedShape.setW(origSize.width - (startX - endX));
-                canvas.selectedShape.setH(origSize.height - (startY - endY));
-            } else {
-                canvas.selectedShape.setX(origSize.x - (startX - endX));
-                canvas.selectedShape.setY(origSize.y - (startY - endY));
+            if (moving && canvas.selectedShape != null) {
+                if (canvas.selectedShape instanceof DLine) {
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                    canvas.selectedShape.setW(origSize.width - (startX - endX));
+                    canvas.selectedShape.setH(origSize.height - (startY - endY));
+                } else {
+                    canvas.selectedShape.setX(origSize.x - (startX - endX));
+                    canvas.selectedShape.setY(origSize.y - (startY - endY));
+                }
+                repaint();
             }
-            repaint();
         }
     }//GEN-LAST:event_canvasMouseDragged
     private void resizeShape(int x, int y, int w, int h, int p) {
@@ -705,19 +761,18 @@ public class Whiteboard extends javax.swing.JFrame {
     }
     private void deleteButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_deleteButtonMouseClicked
         if (canvas.selectedShape != null) {
+            if (status.equals(SERVER_STATUS)) {
+                sendToClient(DELETE_COMMAND, canvas.selectedShape.getModel());
+            }
             canvas.remove(shapeTableModel);//take selected item away
+
         }
     }//GEN-LAST:event_deleteButtonMouseClicked
 
 
     private void startClientMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startClientMenuItemActionPerformed
         if (status.equals(NORMAL_STATUS)) {
-            status = CLIENT_STATUS;
-            statusLabel.setText(status);
-            ipLabel.setText(IP);
-            portLabel.setText("");
-            //disable the things a client cannot do
-            disableClientItems();
+            startClient();
         }
     }//GEN-LAST:event_startClientMenuItemActionPerformed
 
@@ -754,10 +809,12 @@ public class Whiteboard extends javax.swing.JFrame {
     private void startServerMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startServerMenuItemActionPerformed
         if (status.equals(NORMAL_STATUS)) {
             String port = JOptionPane.showInputDialog(this, "Enter Port Number", "Server Setup", JOptionPane.QUESTION_MESSAGE);
+            if(port!=null){
             startServer(port);
             startServerMenuItem.setEnabled(false);
             startClientMenuItem.setEnabled(false);
             openFileMenuItem.setEnabled(false);
+            }
         }
     }//GEN-LAST:event_startServerMenuItemActionPerformed
 
@@ -783,8 +840,16 @@ public class Whiteboard extends javax.swing.JFrame {
     }//GEN-LAST:event_canvasComponentResized
 
     private void clearButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clearButtonMousePressed
-        //delete related listeners for the shape
-        canvas.list.forEach(shape -> shape.removeAllListeners());
+        //delete related listeners for the shape and send a delete command if it is a server
+        canvas.list.forEach(shape -> {
+            if (status.equals(SERVER_STATUS)) {
+
+                sendToClient(DELETE_COMMAND, shape.getModel());
+            }
+            shape.removeAllListeners();
+
+        });
+
         //get rid of it on the canvas
         canvas.clear(shapeTableModel);
         //reset other values
@@ -792,22 +857,24 @@ public class Whiteboard extends javax.swing.JFrame {
         nextFreeX = shapeSpacing;
         nextFreeY = shapeSpacing;
         resetTextBoxItems();
+
     }//GEN-LAST:event_clearButtonMousePressed
 
     private void canvasMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_canvasMouseWheelMoved
-        int notches = evt.getWheelRotation();
-        if (canvas.selectedShape != null) {
-            DShape cShape = canvas.selectedShape; // current selected shape
-            origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
-            if (notches < 0) {
-                resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
-                repaint();
-            } else {
-                resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
-                repaint();
+        if (status.equals(NORMAL_STATUS) || status.equals(SERVER_STATUS)) {
+            int notches = evt.getWheelRotation();
+            if (canvas.selectedShape != null) {
+                DShape cShape = canvas.selectedShape; // current selected shape
+                origSize = new Rectangle(cShape.getX(), cShape.getY(), cShape.getW(), cShape.getH());
+                if (notches < 0) {
+                    resizeShape(origSize.x, origSize.y, origSize.width - 10, origSize.height - 10, 4);
+                    repaint();
+                } else {
+                    resizeShape(origSize.x, origSize.y, origSize.width + 10, origSize.height + 10, 4);
+                    repaint();
+                }
             }
         }
-
     }//GEN-LAST:event_canvasMouseWheelMoved
 
     private void saveAsImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsImageActionPerformed
@@ -849,38 +916,16 @@ public class Whiteboard extends javax.swing.JFrame {
         addShapeToCanvas("text");
     }//GEN-LAST:event_addTextButtonMousePressed
 
-    private void moveBackMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveBackMousePressed
-        if(canvas.selectedShape != null){
-            int shapeCount = canvas.list.size();
-            for (int i = 0; i < shapeCount; i++) {
-                if(canvas.selectedShape == canvas.list.get(i)){
-                    if(i == 0){
-                        return;
-                    }else{
-                        Collections.swap(canvas.list, i, i-1);
-                        repaint();
-                    }
-                }
-            }
+    private void moveBackButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveBackButtonMousePressed
+        canvas.moveBack();
+        if (status.equals(SERVER_STATUS)) {
+            sendToClient(BACK_COMMAND, canvas.selectedShape.getModel());
         }
-    }//GEN-LAST:event_moveBackMousePressed
+    }//GEN-LAST:event_moveBackButtonMousePressed
 
-    private void moveFrontMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveFrontMousePressed
-        if(canvas.selectedShape != null){
-            int shapeCount = canvas.list.size();
-            for (int i = 0; i < shapeCount; i++) {
-                if(canvas.selectedShape == canvas.list.get(i)){
-                    if(i + 1 > shapeCount -1){
-                        return;
-                    }else{
-                        Collections.swap(canvas.list, i, i + 1);
-                        repaint();
-                        return;
-                    }
-                }
-            }
-        }
-    }//GEN-LAST:event_moveFrontMousePressed
+    private void moveFrontButtonMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_moveFrontButtonMousePressed
+        canvas.moveFront();
+    }//GEN-LAST:event_moveFrontButtonMousePressed
 
     /**
      * @param args the command line arguments
@@ -936,8 +981,8 @@ public class Whiteboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar2;
     private javax.swing.JPopupMenu.Separator jSeparator1;
-    private javax.swing.JButton moveBack;
-    private javax.swing.JButton moveFront;
+    private javax.swing.JButton moveBackButton;
+    private javax.swing.JButton moveFrontButton;
     private javax.swing.JFileChooser openFileChooser;
     private javax.swing.JMenuItem openFileMenuItem;
     private javax.swing.JLabel portLabel;
@@ -955,7 +1000,7 @@ public class Whiteboard extends javax.swing.JFrame {
 
     private void startServer(String port) {
         int p;
-        if (port.isEmpty()) {
+        if (port == null) {
             //default port
             p = DEFAULT_PORT;
         } else {
@@ -979,8 +1024,8 @@ public class Whiteboard extends javax.swing.JFrame {
         status = SERVER_STATUS;
         statusLabel.setText(status);
         portLabel.setText("port:" + p);
-//            Server server = new Server(p);
-//            server.listen();
+        WhiteboardServer server = new WhiteboardServer(p);
+        server.start();
     }
 
     private void disableTextBoxItems() {
@@ -1008,5 +1053,172 @@ public class Whiteboard extends javax.swing.JFrame {
         deleteButton.setEnabled(false);
         clearButton.setEnabled(false);
         colorChooserButton.setEnabled(false);
+        moveFrontButton.setEnabled(false);
+        moveBackButton.setEnabled(false);
     }
+
+    public void startClient() {
+        portLabel.setText("");
+        int p;
+        if (status.equals(NORMAL_STATUS)) {
+            String port = JOptionPane.showInputDialog(this, "Connect to address " + IP + ": port (default is 39587)");
+            if (port.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "using default port " + DEFAULT_PORT);
+                p = DEFAULT_PORT;
+            } else {
+                try {
+                    //try to set the custom port number;
+                    p = Integer.valueOf(port);
+                    if (p > MAX_PORT || p < 0) {
+                        //too high or low so use default port
+                        p = DEFAULT_PORT;
+                    }
+                } catch (java.lang.NumberFormatException nfe) {
+                    int num = JOptionPane.showConfirmDialog(this, "the port you entered was invalid, using default port 39587.");
+                    if (num == JOptionPane.OK_OPTION) {
+                        //ok to use default port
+                        p = DEFAULT_PORT;
+                    } else {
+                        return;
+                    }
+                }
+            }
+
+            //client made success
+            status = CLIENT_STATUS;
+            disableClientItems();
+            statusLabel.setText(status);
+            ipLabel.setText(IP);
+            portLabel.setText(String.valueOf(p));
+            WhiteboardClient wbclient = new WhiteboardClient(IP, p);
+            client = new Whiteboard();
+            client.status = CLIENT_STATUS;
+            wbclient.start();
+        }
+    }
+
+    public void startServer() {
+        if (status.equals(NORMAL_STATUS)) {
+
+        }
+    }
+
+    public class WhiteboardClient extends Thread {
+
+        private final String name;
+        private final int port;
+
+        public WhiteboardClient(String name, int port) {
+            this.port = port;
+            this.name = name;
+        }
+
+        @Override
+        public void run() {
+            try {
+                //to the server
+                Socket clientSocket = new Socket(name, port);
+
+                ObjectInputStream ins = new ObjectInputStream(clientSocket.getInputStream());
+
+                while (true) {
+
+                    String command = (String) ins.readObject();
+                    String shapeModel = (String) ins.readObject();
+                    //do decoding
+                    XMLDecoder decoder;
+                    decoder = new XMLDecoder(new ByteArrayInputStream(shapeModel.getBytes()));
+                    DShapeModel model = (DShapeModel) decoder.readObject();
+                    decoder.close();
+
+                    //do commands
+                    switch (command) {
+                        case ADD_COMMAND:
+                            client.canvas.addShape(model, shapeTableModel);
+                            break;
+                        case UPDATE_COMMAND:
+                            client.canvas.updateShape(model, shapeTableModel);
+                            break;
+                        case DELETE_COMMAND:
+                            client.canvas.remove(shapeTableModel);
+                            break;
+                        case FRONT_COMMAND:
+                            client.canvas.moveFront();
+                            break;
+                        case BACK_COMMAND:
+                            client.canvas.moveBack();
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+
+            } catch (IOException | ClassNotFoundException ex) {
+                Logger.getLogger(WhiteboardClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+    }
+
+    //
+    private synchronized void sendItem(ObjectOutputStream objectOutputStream) {
+        outs.add(objectOutputStream);
+    }
+
+    private void sendToClient(String command, DShapeModel model) {
+        outs.forEach(out -> {
+            try {
+                out.writeObject(command);
+                OutputStream os = new ByteArrayOutputStream();
+                XMLEncoder xe;
+                xe = new XMLEncoder(os);
+                xe.writeObject(model);
+                xe.close();
+                String xmlString = os.toString();
+                out.writeObject(xmlString);
+            } catch (IOException ex) {
+                Logger.getLogger(Whiteboard.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        });
+
+    }
+
+    private class WhiteboardServer extends Thread {
+
+        private final int port;
+
+        public WhiteboardServer(int port) {
+            this.port = port;
+        }
+
+        @Override
+        public void run() {
+
+            try {
+                ServerSocket serverSocket = new ServerSocket(port);
+                while (true) {
+                    Socket clientSocket = null;
+                    clientSocket = serverSocket.accept();
+
+                    // Get an output stream to the client, and add it to
+                    // the list of outputs
+                    // (our server only uses the output stream of the
+                    // connection)
+                    sendItem(new ObjectOutputStream(clientSocket.getOutputStream()));
+
+                    canvas.list.stream().map((shape) -> shape.getModel()).forEachOrdered((dShapeModel) -> {
+                        sendToClient(ADD_COMMAND, dShapeModel);
+                    });
+
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(Whiteboard.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+    }
+
 }

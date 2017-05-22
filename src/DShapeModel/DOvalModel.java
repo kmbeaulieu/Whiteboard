@@ -8,7 +8,7 @@ public class DOvalModel extends DShapeModel{
         super();
     }
     
-    public DOvalModel(int x, int y, int w, int h, Color c){
-        super(x,y,w,h,c);
+    public DOvalModel(int x, int y, int w, int h, Color c, int id){
+        super(x,y,w,h,c,id);
     }
 }

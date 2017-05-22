@@ -9,6 +9,9 @@ public class DRect extends DShape {
     public DRect(DShapeModel dsm) {
         super(dsm);
     }
+    public DRect(){
+        super();
+    }
 
     @Override
     public void draw(Graphics g) {
@@ -17,4 +20,6 @@ public class DRect extends DShape {
 
         //do custom rectangle stuff here
     }
+    
+    
 }
